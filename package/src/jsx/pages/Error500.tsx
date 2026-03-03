@@ -1,12 +1,10 @@
 import { Link } from "react-router-dom";
-import bgImg  from "../../assets/images/student-bg.jpg";
-import Student  from "../../assets/images/svg/student.svg";
 
 const Error500 = () => {
    return (
-      <div className="authincation" style={{backgroundImage: `url(${bgImg})`, backgroundRepeat:"no-repeat", backgroundSize:"cover" }}>
+      <div className="authincation">
          <div className="container">
-            <div className="row h-100 align-items-center">
+            <div className="row h-100 align-items-center justify-content-center">
                <div className="col-lg-6 col-sm-12">
                   <div className="form-input-content error-page">
                      <h1 className="error-text text-primary">500</h1>
@@ -14,9 +12,6 @@ const Error500 = () => {
                      <p>You do not have permission to view this resource</p>
                      <Link className="btn btn-primary" to="/dashboard">Back to Home</Link>
                   </div>
-               </div>
-               <div className="col-lg-6 col-sm-12">
-                  <img  className="w-100 move1" src={Student} alt="student" />
                </div>
             </div>
          </div>

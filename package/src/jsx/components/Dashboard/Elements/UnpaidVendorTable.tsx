@@ -1,16 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
-import trans1 from "./../../../../assets/images/trans/1.jpg";
-import trans2 from "./../../../../assets/images/trans/2.jpg";
-import trans3 from "./../../../../assets/images/trans/3.jpg";
-import trans4 from "./../../../../assets/images/trans/4.jpg";
-import trans5 from "./../../../../assets/images/trans/5.jpg";
 import { Dropdown } from "react-bootstrap";
 
 interface tableDataType {
   id: string;
-  image: string;
+  initials: string;
   companyName: string;
   rcNumber: string;
   category: string;
@@ -19,96 +13,16 @@ interface tableDataType {
 }
 
 const tableData: tableDataType[] = [
-  {
-    id: "1",
-    image: trans1,
-    companyName: "Tech Solutions Ltd",
-    rcNumber: "RC 1234567911",
-    category: "Software Services",
-    registration: "Public",
-    status: "Approved",
-  },
-  {
-    id: "2",
-    image: trans2,
-    companyName: "Karen Logistics",
-    rcNumber: "RC 1234567101",
-    category: "Transportation",
-    registration: "Admin",
-    status: "Approved",
-  },
-  {
-    id: "3",
-    image: trans3,
-    companyName: "Adja Consulting Group",
-    rcNumber: "RC 1234567001",
-    category: "Consultancy",
-    registration: "Public",
-    status: "Approved",
-  },
-  {
-    id: "4",
-    image: trans4,
-    companyName: "Brown & Co Engineering",
-    rcNumber: "RC 1234567231",
-    category: "Engineering",
-    registration: "Admin",
-    status: "Approved",
-  },
-  {
-    id: "5",
-    image: trans5,
-    companyName: "Xarma Holdings",
-    rcNumber: "RC 1234567456",
-    category: "Real Estate",
-    registration: "Public",
-    status: "Approved",
-  },
-  {
-    id: "9",
-    image: trans4,
-    companyName: "Oceanic Enterprises",
-    rcNumber: "RC 9876543210",
-    category: "General Contracts",
-    registration: "Public",
-    status: "Approved",
-  },
-  {
-    id: "10",
-    image: trans5,
-    companyName: "Apex Innovations",
-    rcNumber: "RC 4567891230",
-    category: "IT Equipment",
-    registration: "Admin",
-    status: "Approved",
-  },
-  {
-    id: "6",
-    image: trans1,
-    companyName: "Green Earth Agro",
-    rcNumber: "RC 1122334455",
-    category: "Agriculture",
-    registration: "Public",
-    status: "Approved",
-  },
-  {
-    id: "7",
-    image: trans2,
-    companyName: "Swift Delivery Services",
-    rcNumber: "RC 5566778899",
-    category: "Logistics",
-    registration: "Admin",
-    status: "Approved",
-  },
-  {
-    id: "8",
-    image: trans3,
-    companyName: "Bright Sparks Electricals",
-    rcNumber: "RC 2233445566",
-    category: "Electricals",
-    registration: "Public",
-    status: "Approved",
-  },
+  { id: "1", initials: "TS", companyName: "Tech Solutions Ltd", rcNumber: "RC 1234567911", category: "Software Services", registration: "Public", status: "Approved" },
+  { id: "2", initials: "KL", companyName: "Karen Logistics", rcNumber: "RC 1234567101", category: "Transportation", registration: "Admin", status: "Approved" },
+  { id: "3", initials: "AC", companyName: "Adja Consulting Group", rcNumber: "RC 1234567001", category: "Consultancy", registration: "Public", status: "Approved" },
+  { id: "4", initials: "BC", companyName: "Brown & Co Engineering", rcNumber: "RC 1234567231", category: "Engineering", registration: "Admin", status: "Approved" },
+  { id: "5", initials: "XH", companyName: "Xarma Holdings", rcNumber: "RC 1234567456", category: "Real Estate", registration: "Public", status: "Approved" },
+  { id: "9", initials: "OE", companyName: "Oceanic Enterprises", rcNumber: "RC 9876543210", category: "General Contracts", registration: "Public", status: "Approved" },
+  { id: "10", initials: "AI", companyName: "Apex Innovations", rcNumber: "RC 4567891230", category: "IT Equipment", registration: "Admin", status: "Approved" },
+  { id: "6", initials: "GE", companyName: "Green Earth Agro", rcNumber: "RC 1122334455", category: "Agriculture", registration: "Public", status: "Approved" },
+  { id: "7", initials: "SD", companyName: "Swift Delivery Services", rcNumber: "RC 5566778899", category: "Logistics", registration: "Admin", status: "Approved" },
+  { id: "8", initials: "BS", companyName: "Bright Sparks Electricals", rcNumber: "RC 2233445566", category: "Electricals", registration: "Public", status: "Approved" },
 ];
 export const UnpaidVendorTable = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -149,12 +63,13 @@ export const UnpaidVendorTable = () => {
             {records.map((item, ind) => (
               <tr key={ind}>
                 <td>
-                  <div className="trans-list">
-                    <img
-                      src={item.image}
-                      alt=""
-                      className="avatar avatar-sm me-3"
-                    />
+                  <div className="trans-list d-flex align-items-center">
+                    <div
+                      className="avatar avatar-sm me-3 bg-primary d-flex align-items-center justify-content-center text-white fw-bold"
+                      style={{ borderRadius: "50%", fontSize: "0.75rem", minWidth: 36, height: 36 }}
+                    >
+                      {item.initials}
+                    </div>
                     <span style={{ fontWeight: 400 }}>{item.companyName}</span>
                   </div>
                 </td>

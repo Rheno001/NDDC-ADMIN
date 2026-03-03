@@ -8,20 +8,16 @@ import LogoutPage from "./Logout";
 
 /// Image
 import profile from "../../../assets/images/user.jpg";
-import avatar from "../../../assets/images/avatar/1.jpg";
-import avatar2 from "../../../assets/images/avatar/2.jpg";
-import avatar3 from "../../../assets/images/avatar/3.jpg";
-import avatar4 from "../../../assets/images/avatar/4.jpg";
 
 const searchList = [
-  { image: avatar, title: "Benjamin" },
-  { image: avatar2, title: "Oliver" },
-  { image: avatar3, title: "Lucas" },
-  { image: avatar4, title: "Harry" },
-  { image: avatar2, title: "Oliver" },
-  { image: avatar4, title: "Harry" },
-  { image: avatar, title: "Benjamin" },
-  { image: avatar3, title: "Lucas" },
+  { initials: "BJ", title: "Benjamin" },
+  { initials: "OL", title: "Oliver" },
+  { initials: "LC", title: "Lucas" },
+  { initials: "HR", title: "Harry" },
+  { initials: "OL", title: "Oliver" },
+  { initials: "HR", title: "Harry" },
+  { initials: "BJ", title: "Benjamin" },
+  { initials: "LC", title: "Lucas" },
 ];
 
 interface propType {
@@ -70,26 +66,26 @@ const Header = ({ onNote }: propType) => {
   const finalName = filterName.includes("app")
     ? filterName.filter((f) => f !== "app")
     : filterName.includes("ui")
-    ? filterName.filter((f) => f !== "ui")
-    : filterName.includes("uc")
-    ? filterName.filter((f) => f !== "uc")
-    : filterName.includes("basic")
-    ? filterName.filter((f) => f !== "basic")
-    : filterName.includes("jquery")
-    ? filterName.filter((f) => f !== "jquery")
-    : filterName.includes("table")
-    ? filterName.filter((f) => f !== "table")
-    : filterName.includes("page")
-    ? filterName.filter((f) => f !== "page")
-    : filterName.includes("email")
-    ? filterName.filter((f) => f !== "email")
-    : filterName.includes("ecom")
-    ? filterName.filter((f) => f !== "ecom")
-    : filterName.includes("chart")
-    ? filterName.filter((f) => f !== "chart")
-    : filterName.includes("editor")
-    ? filterName.filter((f) => f !== "editor")
-    : filterName;
+      ? filterName.filter((f) => f !== "ui")
+      : filterName.includes("uc")
+        ? filterName.filter((f) => f !== "uc")
+        : filterName.includes("basic")
+          ? filterName.filter((f) => f !== "basic")
+          : filterName.includes("jquery")
+            ? filterName.filter((f) => f !== "jquery")
+            : filterName.includes("table")
+              ? filterName.filter((f) => f !== "table")
+              : filterName.includes("page")
+                ? filterName.filter((f) => f !== "page")
+                : filterName.includes("email")
+                  ? filterName.filter((f) => f !== "email")
+                  : filterName.includes("ecom")
+                    ? filterName.filter((f) => f !== "ecom")
+                    : filterName.includes("chart")
+                      ? filterName.filter((f) => f !== "chart")
+                      : filterName.includes("editor")
+                        ? filterName.filter((f) => f !== "editor")
+                        : filterName;
   return (
     <div className={`header ${headerFix ? "sticky" : ""}`}>
       <div className="header-content">
@@ -103,8 +99,8 @@ const Header = ({ onNote }: propType) => {
                 {finalName.join(" ").length === 0
                   ? "Dashboard"
                   : finalName.join(" ") === "dashboard dark"
-                  ? "Dashboard"
-                  : finalName.join(" ")}
+                    ? "Dashboard"
+                    : finalName.join(" ")}
               </div>
             </div>
             <ul className="navbar-nav header-right">
@@ -165,11 +161,12 @@ const Header = ({ onNote }: propType) => {
                             key={index}
                           >
                             <li>
-                              <img
-                                src={item.image}
-                                className="avatar avatar-sm"
-                                alt=""
-                              />
+                              <div
+                                className="avatar avatar-sm bg-primary d-flex align-items-center justify-content-center text-white fw-bold"
+                                style={{ borderRadius: "50%", fontSize: "0.7rem", minWidth: 32, height: 32 }}
+                              >
+                                {item.initials}
+                              </div>
                               <Link to={"#"} className="ms-2">
                                 {item.title}
                               </Link>
@@ -187,9 +184,8 @@ const Header = ({ onNote }: propType) => {
               <li className="nav-item dropdown notification_dropdown">
                 <Link
                   to={"#"}
-                  className={`nav-link bell dz-theme-mode ${
-                    themeMode ? "active" : ""
-                  }
+                  className={`nav-link bell dz-theme-mode ${themeMode ? "active" : ""
+                    }
 					`}
                   onClick={() => handleThemeMode()}
                 >
@@ -238,9 +234,8 @@ const Header = ({ onNote }: propType) => {
               <li className="nav-item dropdown notification_dropdown">
                 <Link
                   to={"#"}
-                  className={`nav-link bell dz-fullscreen ${
-                    changeScreen ? "active" : ""
-                  }`}
+                  className={`nav-link bell dz-fullscreen ${changeScreen ? "active" : ""
+                    }`}
                   onClick={() => {
                     EnterFullScreen();
                     setChangeScreen(!changeScreen);
@@ -355,7 +350,7 @@ const Header = ({ onNote }: propType) => {
                       <li>
                         <div className="timeline-panel">
                           <div className="media me-2">
-                            <img alt="images" width={50} src={avatar} />
+                            <div className="media me-2 media-primary" style={{ width: 50, height: 50, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--primary)", color: "#fff", fontWeight: 700 }}>DS</div>
                           </div>
                           <div className="media-body">
                             <h6 className="mb-1">Dr sultads Send you Photo</h6>
@@ -394,7 +389,7 @@ const Header = ({ onNote }: propType) => {
                       <li>
                         <div className="timeline-panel">
                           <div className="media me-2">
-                            <img alt="" width={50} src={avatar} />
+                            <div className="media me-2 media-primary" style={{ width: 50, height: 50, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--primary)", color: "#fff", fontWeight: 700 }}>DS</div>
                           </div>
                           <div className="media-body">
                             <h6 className="mb-1">Dr sultads Send you Photo</h6>

@@ -1,56 +1,31 @@
 import { Link } from "react-router-dom";
-import { IMAGES, SVGICON } from "../Dashboard/Content";
+import { SVGICON } from "../Dashboard/Content";
 import { Dropdown } from "react-bootstrap";
 import PaymentHistoryTable from "./PaymentHistoryTable";
 
-import profile from "./../../../assets/images/profile.svg";
-import location from "./../../../assets/images/svg/location.svg";
-import phone from "./../../../assets/images/svg/phone.svg";
-import email from "./../../../assets/images/svg/email.svg";
+
 
 interface scheduleBlogType {
   title: string;
   subtitle: string;
-  image: string;
   color: string;
 }
 interface basicDetailType {
   title: string;
   subtitle: string;
-  image: string;
 }
 const scheduleBlog: scheduleBlogType[] = [
-  {
-    title: "Basic Algorithm",
-    subtitle: "Algorithm",
-    image: IMAGES.avat1,
-    color: "schedule-card",
-  },
-  {
-    title: "Basic Art",
-    subtitle: "Art",
-    image: IMAGES.avat2,
-    color: "schedule-card-1",
-  },
-  {
-    title: "React & Scss",
-    subtitle: "Programming",
-    image: IMAGES.avat3,
-    color: "schedule-card-2",
-  },
-  {
-    title: "Simple Past Tense",
-    subtitle: "English",
-    image: IMAGES.avat4,
-    color: "schedule-card-3",
-  },
+  { title: "Basic Algorithm", subtitle: "Algorithm", color: "schedule-card" },
+  { title: "Basic Art", subtitle: "Art", color: "schedule-card-1" },
+  { title: "React & Scss", subtitle: "Programming", color: "schedule-card-2" },
+  { title: "Simple Past Tense", subtitle: "English", color: "schedule-card-3" },
 ];
 
 const basicDetail: basicDetailType[] = [
-  { title: "Parents", subtitle: "Justin Hope", image: profile },
-  { title: "Address", subtitle: "Jakarta, Indonesia", image: location },
-  { title: "Phone", subtitle: "+12 345 6789 0", image: phone },
-  { title: "Email", subtitle: "Historia@mail.com", image: email },
+  { title: "Parents", subtitle: "Justin Hope" },
+  { title: "Address", subtitle: "Jakarta, Indonesia" },
+  { title: "Phone", subtitle: "+12 345 6789 0" },
+  { title: "Email", subtitle: "Historia@mail.com" },
 ];
 
 const VendorDetails = () => {
@@ -101,11 +76,7 @@ const VendorDetails = () => {
             <div className="d-flex justify-content-between">
               <div className="user">
                 <div className="user-media">
-                  <img
-                    src={IMAGES.avat9}
-                    alt=""
-                    className="avatar avatar-xxl"
-                  />
+                  <div className="avatar avatar-xxl bg-primary d-flex align-items-center justify-content-center text-white" style={{ fontSize: "2rem", fontWeight: 700 }}>KH</div>
                 </div>
                 <div>
                   <h2 className="mb-0">Karen Hope</h2>
@@ -128,9 +99,7 @@ const VendorDetails = () => {
                 <div className="col-xl-3 col-xxl-6 col-sm-6" key={ind}>
                   <ul className="vendor-details">
                     <li className="me-2">
-                      <Link to={"#"} className="icon-box bg-secondary">
-                        <img src={item.image} alt="" />
-                      </Link>
+                      <span className="icon-box bg-secondary d-flex align-items-center justify-content-center" style={{ width: 32, height: 32, borderRadius: "50%" }} />
                     </li>
                     <li>
                       <span>{item.title}:</span>
@@ -176,13 +145,7 @@ const VendorDetails = () => {
                         <li>{SVGICON.watch} 09.00 - 10.00 AM</li>
                       </ul>
                     </div>
-                    <div>
-                      <img
-                        src={data.image}
-                        className="avatar avatar-lg"
-                        alt=""
-                      />
-                    </div>
+                    <div />
                   </div>
                 </div>
               </div>

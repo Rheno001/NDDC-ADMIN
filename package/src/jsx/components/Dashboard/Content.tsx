@@ -1,109 +1,57 @@
-// import phone from "./../../../assets/images/svg/phone.svg";
-
-import trans1 from "./../../../assets/images/trans/1.jpg";
-import trans2 from "./../../../assets/images/trans/2.jpg";
-import trans3 from "./../../../assets/images/trans/3.jpg";
-import trans4 from "./../../../assets/images/trans/4.jpg";
-import trans5 from "./../../../assets/images/trans/5.jpg";
-import trans6 from "./../../../assets/images/trans/6.jpg";
-import trans7 from "./../../../assets/images/trans/7.jpg";
-import trans8 from "./../../../assets/images/trans/8.jpg";
-import trans9 from "./../../../assets/images/trans/9.jpg";
-import trans10 from "./../../../assets/images/trans/10.jpg";
-import avat1 from "./../../../assets/images/avatar/1.jpg";
-import avat2 from "./../../../assets/images/avatar/2.jpg";
-import avat3 from "./../../../assets/images/avatar/3.jpg";
-import avat4 from "./../../../assets/images/avatar/4.jpg";
-import avat8 from "./../../../assets/images/avatar/8.jpg";
-import avat9 from "./../../../assets/images/avatar/9.jpg";
-import avat10 from "./../../../assets/images/avatar/10.jpg";
 import noimage from "./../../../assets/images/no-img-avatar.png";
-import contact1 from "./../../../assets/images/contacts/1.jpg";
-import contact2 from "./../../../assets/images/contacts/2.jpg";
-import contact3 from "./../../../assets/images/contacts/3.jpg";
-import contact4 from "./../../../assets/images/contacts/4.jpg";
-import contact5 from "./../../../assets/images/contacts/5.jpg";
-import contact6 from "./../../../assets/images/contacts/6.jpg";
-import contact7 from "./../../../assets/images/contacts/7.jpg";
-import contact8 from "./../../../assets/images/contacts/8.jpg";
-import contact9 from "./../../../assets/images/contacts/9.jpg";
-import contact10 from "./../../../assets/images/contacts/10.jpg";
-import contact11 from "./../../../assets/images/contacts/11.jpg";
-import contact12 from "./../../../assets/images/contacts/12.jpg";
-import food1 from "./../../../assets/images/food/pic1.jpg";
-import food2 from "./../../../assets/images/food/pic2.jpg";
-import food3 from "./../../../assets/images/food/pic3.jpg";
-import food4 from "./../../../assets/images/food/pic4.jpg";
-import food5 from "./../../../assets/images/food/pic5.jpg";
-import food6 from "./../../../assets/images/food/pic6.jpg";
-import avatarpng1 from "./../../../assets/images/avatar/1.png";
-import avatarpng2 from "./../../../assets/images/avatar/2.png";
-import avatarpng3 from "./../../../assets/images/avatar/3.png";
-import profile14 from "./../../../assets/images/profile/14.jpg";
-import profile18 from "./../../../assets/images/profile/18.jpg";
-import profile19 from "./../../../assets/images/profile/19.jpg";
-import profilepic1 from "./../../../assets/images/profile/small/pic1.jpg";
-import profilepic2 from "./../../../assets/images/profile/small/pic2.jpg";
-import profilepic3 from "./../../../assets/images/profile/small/pic3.jpg";
-import profilepic4 from "./../../../assets/images/profile/small/pic4.jpg";
-import profilepic5 from "./../../../assets/images/profile/small/pic5.jpg";
-import activity1 from "./../../../assets/images/activity-img/pic1.jpg";
-import activity2 from "./../../../assets/images/activity-img/pic2.jpg";
-import activity3 from "./../../../assets/images/activity-img/pic3.jpg";
-import activity4 from "./../../../assets/images/activity-img/pic4.jpg";
 
 export const IMAGES = {
-  trans1: trans1,
-  trans2: trans2,
-  trans3: trans3,
-  trans4: trans4,
-  trans5: trans5,
-  trans6: trans6,
-  trans7: trans7,
-  trans8: trans8,
-  trans9: trans9,
-  trans10: trans10,
-  avat1: avat1,
-  avat2: avat2,
-  avat3: avat3,
-  avat4: avat4,
-  avat8: avat8,
-  avat9: avat9,
-  avat10: avat10,
+  trans1: noimage,
+  trans2: noimage,
+  trans3: noimage,
+  trans4: noimage,
+  trans5: noimage,
+  trans6: noimage,
+  trans7: noimage,
+  trans8: noimage,
+  trans9: noimage,
+  trans10: noimage,
+  avat1: noimage,
+  avat2: noimage,
+  avat3: noimage,
+  avat4: noimage,
+  avat8: noimage,
+  avat9: noimage,
+  avat10: noimage,
   noimage: noimage,
-  contact1: contact1,
-  contact2: contact2,
-  contact3: contact3,
-  contact4: contact4,
-  contact5: contact5,
-  contact6: contact6,
-  contact7: contact7,
-  contact8: contact8,
-  contact9: contact9,
-  contact10: contact10,
-  contact11: contact11,
-  contact12: contact12,
-  food1: food1,
-  food2: food2,
-  food3: food3,
-  food4: food4,
-  food5: food5,
-  food6: food6,
-  avatarpng1: avatarpng1,
-  avatarpng2: avatarpng2,
-  avatarpng3: avatarpng3,
-  profile14: profile14,
-  profile18: profile18,
-  profile19: profile19,
-  profilepic1: profilepic1,
-  profilepic2: profilepic2,
-  profilepic3: profilepic3,
-  profilepic4: profilepic4,
-  profilepic5: profilepic5,
-  activity1: activity1,
-  activity2: activity2,
-  activity3: activity3,
-  activity4: activity4,
+  contact1: noimage,
+  contact2: noimage,
+  contact3: noimage,
+  contact4: noimage,
+  contact5: noimage,
+  contact6: noimage,
+  contact7: noimage,
+  contact8: noimage,
+  contact9: noimage,
+  contact10: noimage,
+  contact11: noimage,
+  contact12: noimage,
+  food1: noimage,
+  food2: noimage,
+  food3: noimage,
+  food4: noimage,
+  food5: noimage,
+  food6: noimage,
+  avatarpng1: noimage,
+  avatarpng2: noimage,
+  avatarpng3: noimage,
+  profile14: noimage,
+  profile18: noimage,
+  profile19: noimage,
+  profilepic1: noimage,
+  profilepic2: noimage,
+  profilepic3: noimage,
+  profilepic4: noimage,
+  profilepic5: noimage,
+  activity1: noimage,
+  activity2: noimage,
+  activity3: noimage,
+  activity4: noimage,
 };
 
 export const SVGICON = {

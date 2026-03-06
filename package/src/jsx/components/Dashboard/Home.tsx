@@ -2,7 +2,8 @@
 
 //Import Components
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Tab, Nav } from "react-bootstrap";
 /* import { TeacherDetails } from "./Elements/TeacherDetails"; */
 import { UnpaidVendorTable } from "./Elements/UnpaidVendorTable";
@@ -22,29 +23,99 @@ const statCards = [
     icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>,
   },
   {
-    title: "Rejected Vendors", value: "32", bg: "bg-danger",
+    title: "Suspended Vendors", value: "32", bg: "bg-danger",
     icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" /></svg>,
   },
   {
-    title: "Closed Bids", value: "58", bg: "bg-dark",
-    icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>,
+    title: "Total Bids Advertised", value: "45", bg: "bg-dark",
+    icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z" /></svg>,
   },
   {
-    title: "Open Bids", value: "24", bg: "bg-info",
+    title: "Open Bids", value: "12", bg: "bg-info",
     icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" /></svg>,
   },
   {
-    title: "Admin Accounts", value: "12", bg: "bg-secondary",
-    icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.32-2.17 6.44-5 7.59-2.83-1.15-5-4.27-5-7.59V7.18L12 5z" /></svg>,
+    title: "Closed Bids", value: "22", bg: "bg-secondary",
+    icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" /></svg>,
   },
   {
-    title: "Public Accounts", value: "81", bg: "bg-primary",
-    icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" /></svg>,
+    title: "Under Evaluation", value: "11", bg: "bg-warning",
+    icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" /></svg>,
   },
 ];
 
+type DocStatus = "Pending" | "Approved" | "Rejected" | "Reupload Requested";
+
+const statusStyle: Record<DocStatus, { bg: string; color: string }> = {
+  Pending: { bg: "#fff3cd", color: "#856404" },
+  Approved: { bg: "#d4edda", color: "#155724" },
+  Rejected: { bg: "#f8d7da", color: "#721c24" },
+  "Reupload Requested": { bg: "#d1ecf1", color: "#0c5460" },
+};
+
+const initialDocs: { vendor: string; doc: string; date: string; status: DocStatus }[] = [
+  { vendor: "Zenith Supplies Ltd", doc: "CAC Certificate", date: "Mar 01, 2026", status: "Pending" },
+  { vendor: "Horizon Contractors", doc: "Tax Clearance Certificate", date: "Mar 02, 2026", status: "Approved" },
+  { vendor: "Alpha Tech Solutions", doc: "Company Profile", date: "Mar 03, 2026", status: "Pending" },
+  { vendor: "Bridgewater Ventures", doc: "Bank Statement", date: "Mar 04, 2026", status: "Pending" },
+  { vendor: "NovaBuild Enterprises", doc: "Audited Financials", date: "Mar 05, 2026", status: "Approved" },
+  { vendor: "Crestview Partners", doc: "PENCOM Clearance", date: "Mar 06, 2026", status: "Pending" },
+  { vendor: "Delta Force Supplies", doc: "ITF Clearance", date: "Mar 06, 2026", status: "Pending" },
+  { vendor: "Emerald Works Ltd", doc: "CAC Certificate", date: "Mar 06, 2026", status: "Approved" },
+];
+
+const bidData = [
+  { title: "Supply of Office Equipment", vendors: 8, deadline: "Mar 20, 2026", status: "Open" },
+  { title: "Construction of Access Road", vendors: 14, deadline: "Mar 28, 2026", status: "Open" },
+  { title: "ICT Infrastructure Upgrade", vendors: 6, deadline: "Apr 05, 2026", status: "Evaluation" },
+  { title: "Procurement of Medical Supplies", vendors: 11, deadline: "Feb 28, 2026", status: "Closed" },
+  { title: "Renovation of Staff Quarters", vendors: 9, deadline: "Mar 15, 2026", status: "Evaluation" },
+  { title: "Supply of Generator Sets", vendors: 5, deadline: "Jan 31, 2026", status: "Closed" },
+  { title: "Borehole Drilling Project", vendors: 7, deadline: "Apr 10, 2026", status: "Open" },
+  { title: "Supply of Laboratory Equipment", vendors: 3, deadline: "Apr 18, 2026", status: "Open" },
+];
+
+const bidStatusStyle: Record<string, { bg: string; color: string }> = {
+  Open: { bg: "#d1ecf1", color: "#0c5460" },
+  Closed: { bg: "#f8d7da", color: "#721c24" },
+  Evaluation: { bg: "#e2d9f3", color: "#4a235a" },
+};
+
 const Home = () => {
   // const [startDate, setStartDate] = useState<null | Date | undefined>(null);
+  const [docRows, setDocRows] = useState(initialDocs.filter(d => d.status === "Pending"));
+
+  // Pagination – doc queue
+  const docPageSize = 3;
+  const [docPage, setDocPage] = useState(1);
+  const docLastIdx = docPage * docPageSize;
+  const docFirstIdx = docLastIdx - docPageSize;
+  const docPageCount = Math.ceil(docRows.length / docPageSize);
+  const docPageNums = [...Array(docPageCount + 1).keys()].slice(1);
+  const pagedDocs = docRows.slice(docFirstIdx, docLastIdx);
+
+  // Pagination – bid submissions
+  const bidPageSize = 4;
+  const [bidPage, setBidPage] = useState(1);
+  const bidLastIdx = bidPage * bidPageSize;
+  const bidFirstIdx = bidLastIdx - bidPageSize;
+  const bidPageCount = Math.ceil(bidData.length / bidPageSize);
+  const bidPageNums = [...Array(bidPageCount + 1).keys()].slice(1);
+  const pagedBids = bidData.slice(bidFirstIdx, bidLastIdx);
+
+  const handleActionChange = (index: number, action: string) => {
+    const nextStatus: Record<string, DocStatus> = {
+      approve: "Approved",
+      reject: "Rejected",
+      reupload: "Reupload Requested",
+    };
+    if (!nextStatus[action]) return;
+    // index here is the absolute index within docRows
+    setDocRows(prev =>
+      prev.map((row, i) => i === index ? { ...row, status: nextStatus[action] } : row)
+    );
+  };
+
   useEffect(() => {
     document.body.setAttribute("data-theme-version", "light");
   }, []);
@@ -62,6 +133,41 @@ const Home = () => {
                   <div className="media-body text-white text-start">
                     <p className="mb-0 text-white" style={{ fontSize: "0.9rem" }}>{card.title}</p>
                     <h3 className="text-white mb-0" style={{ fontSize: "1.6rem", fontWeight: 700 }}>{card.value}</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Compliance Monitoring Cards */}
+      <h4 className="card-title text-muted fw-bold mt-2 mb-3" style={{ fontSize: "1.1rem" }}>Compliance Monitoring</h4>
+      <div className="row">
+        {[
+          {
+            title: "Vendors with expired documents", value: 132, bg: "bg-danger",
+            icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg>,
+          },
+          {
+            title: "Documents awaiting verification", value: 210, bg: "bg-warning",
+            icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-1-5h2v2h-2zm0-8h2v6h-2z" /></svg>,
+          },
+          {
+            title: "Rejected documents", value: 54, bg: "bg-dark",
+            icon: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z" /></svg>,
+          },
+        ].map((card, idx) => (
+          <div className="col-xl-4 col-sm-4" key={idx}>
+            <div className={`widget-stat card ${card.bg}`}>
+              <div className="card-body p-3">
+                <div className="media align-items-center flex-wrap">
+                  <span className="me-3" style={{ lineHeight: 1, opacity: 0.9, display: "flex" }}>
+                    {card.icon}
+                  </span>
+                  <div className="media-body text-white text-start flex-grow-1">
+                    <p className="mb-0 text-white" style={{ fontSize: "0.9rem", lineHeight: 1.3 }}>{card.title}</p>
+                    <h3 className="text-white mb-0 mt-2" style={{ fontSize: "1.6rem", fontWeight: 700 }}>{card.value}</h3>
                   </div>
                 </div>
               </div>
@@ -188,7 +294,7 @@ const Home = () => {
                       {/* Deadline */}
                       <div className="d-flex align-items-center mb-3" style={{ opacity: 0.85 }}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" viewBox="0 0 24 24" className="me-1">
-                          <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H5V8h14v13z"/>
+                          <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H5V8h14v13z" />
                         </svg>
                         <small className="text-white">Deadline: {bid.deadline}</small>
                       </div>
@@ -311,6 +417,272 @@ const Home = () => {
           </div>
           <div className="card-body p-0">
             <UnpaidVendorTable />
+          </div>
+        </div>
+      </div>
+
+      {/* Vendor Document Verification Queue */}
+      <div className="col-xl-12 mt-4">
+        <div className="card">
+          <div className="card-header border-0 p-3 d-flex align-items-center justify-content-between">
+            <h4 className="heading mb-0">Vendor Document Verification Queue</h4>
+            <span className="badge bg-warning text-dark px-3 py-2" style={{ fontSize: "0.8rem", borderRadius: "20px" }}>
+              Pending Review
+            </span>
+          </div>
+          <div className="card-body p-0">
+            <div className="table-responsive basic-tbl">
+              <div id="doc-queue-table_wrapper" className="dataTables_wrapper no-footer">
+                <table className="display dataTable no-footer w-100" style={{ fontSize: "0.9rem" }}>
+                  <thead style={{ background: "#f8f9fa" }}>
+                    <tr>
+                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Vendor</th>
+                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Document</th>
+                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Date Uploaded</th>
+                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Status</th>
+                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pagedDocs.map((row, i) => {
+                      const absIdx = docFirstIdx + i;
+                      const s = statusStyle[row.status];
+                      return (
+                        <tr key={absIdx} style={{ borderBottom: "1px solid #f0f0f0" }}>
+                          <td className="px-4 py-3 fw-semibold">{row.vendor}</td>
+                          <td className="px-4 py-3 text-muted">{row.doc}</td>
+                          <td className="px-4 py-3 text-muted">{row.date}</td>
+                          <td className="px-4 py-3">
+                            <span
+                              className="badge px-3 py-2"
+                              style={{ borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600, background: s.bg, color: s.color }}
+                            >
+                              {row.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3" style={{ maxWidth: "170px" }}>
+                            <select
+                              className="form-select form-select-sm"
+                              defaultValue=""
+                              onChange={(e) => handleActionChange(absIdx, e.target.value)}
+                              style={{ borderRadius: "20px", fontSize: "0.8rem", width: "100%", cursor: "pointer" }}
+                            >
+                              <option value="" disabled>Select action…</option>
+                              <option value="approve">✅ Approve</option>
+                              <option value="reject">❌ Reject</option>
+                              <option value="reupload">🔁 Request Reupload</option>
+                            </select>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                <div className="d-sm-flex text-center justify-content-between align-items-center">
+                  <div className="dataTables_info">
+                    Showing {docLastIdx - docPageSize + 1} to{" "}
+                    {docRows.length < docLastIdx ? docRows.length : docLastIdx} of{" "}
+                    {docRows.length} entries
+                  </div>
+                  <div
+                    className="dataTables_paginate paging_simple_numbers justify-content-center"
+                    id="doc-queue_paginate"
+                  >
+                    <Link
+                      className="paginate_button previous disabled"
+                      to="#"
+                      onClick={() => setDocPage(p => Math.max(p - 1, 1))}
+                    >
+                      <i className="fa-solid fa-angle-left" />
+                    </Link>
+                    <span>
+                      {docPageNums.map((n, i) => (
+                        <Link
+                          to={"#"}
+                          className={`paginate_button ${docPage === n ? "current" : ""} `}
+                          key={i}
+                          onClick={() => setDocPage(n)}
+                        >
+                          {n}
+                        </Link>
+                      ))}
+                    </span>
+                    <Link className="paginate_button next" to="#" onClick={() => setDocPage(p => Math.min(p + 1, docPageCount))}>
+                      <i className="fa-solid fa-angle-right" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bid Submissions Overview */}
+      <div className="col-xl-12 mt-4">
+        <div className="card">
+          <div className="card-header border-0 p-3 d-flex align-items-center justify-content-between">
+            <h4 className="heading mb-0">Bid Submissions Overview</h4>
+            <span className="badge bg-primary px-3 py-2" style={{ fontSize: "0.8rem", borderRadius: "20px" }}>
+              All Bids
+            </span>
+          </div>
+          <div className="card-body p-0">
+            <div className="table-responsive basic-tbl">
+              <div id="bid-overview-table_wrapper" className="dataTables_wrapper no-footer">
+                <table className="display dataTable no-footer w-100" style={{ fontSize: "0.9rem" }}>
+                  <thead style={{ background: "#f8f9fa" }}>
+                    <tr>
+                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Bid Title</th>
+                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Vendors Submitted</th>
+                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Deadline</th>
+                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pagedBids.map((row, i) => {
+                      const s = bidStatusStyle[row.status] ?? { bg: "#eee", color: "#333" };
+                      return (
+                        <tr key={i} style={{ borderBottom: "1px solid #f0f0f0" }}>
+                          <td className="px-4 py-3 fw-semibold">{row.title}</td>
+                          <td className="px-4 py-3 text-center">
+                            <span className="badge bg-light text-dark px-3 py-2" style={{ borderRadius: "20px", fontWeight: 700, fontSize: "0.85rem" }}>{row.vendors}</span>
+                          </td>
+                          <td className="px-4 py-3 text-muted">{row.deadline}</td>
+                          <td className="px-4 py-3">
+                            <span
+                              className="badge px-3 py-2"
+                              style={{ borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600, background: s.bg, color: s.color }}
+                            >
+                              {row.status}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                <div className="d-sm-flex text-center justify-content-between align-items-center">
+                  <div className="dataTables_info">
+                    Showing {bidLastIdx - bidPageSize + 1} to{" "}
+                    {bidData.length < bidLastIdx ? bidData.length : bidLastIdx} of{" "}
+                    {bidData.length} entries
+                  </div>
+                  <div
+                    className="dataTables_paginate paging_simple_numbers justify-content-center"
+                    id="bid-overview_paginate"
+                  >
+                    <Link
+                      className="paginate_button previous disabled"
+                      to="#"
+                      onClick={() => setBidPage(p => Math.max(p - 1, 1))}
+                    >
+                      <i className="fa-solid fa-angle-left" />
+                    </Link>
+                    <span>
+                      {bidPageNums.map((n, i) => (
+                        <Link
+                          to={"#"}
+                          className={`paginate_button ${bidPage === n ? "current" : ""} `}
+                          key={i}
+                          onClick={() => setBidPage(n)}
+                        >
+                          {n}
+                        </Link>
+                      ))}
+                    </span>
+                    <Link className="paginate_button next" to="#" onClick={() => setBidPage(p => Math.min(p + 1, bidPageCount))}>
+                      <i className="fa-solid fa-angle-right" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Top Ranked Vendors */}
+      <div className="col-xl-12 mt-4">
+        <div className="card">
+          <div className="card-header border-0 p-3 d-flex align-items-center justify-content-between">
+            <h4 className="heading mb-0">Top Ranked Vendors</h4>
+            <span className="badge bg-success px-3 py-2" style={{ fontSize: "0.8rem", borderRadius: "20px" }}>
+              Highest Scores
+            </span>
+          </div>
+          <div className="card-body pt-0">
+
+            {/* Active Bid Summary Cards */}
+            <div className="row mb-3">
+              {[
+                { bid: "Road Infrastructure Project", vendors: 24, deadline: "10 Jul", status: "Open", statusBg: "#d1ecf1", statusColor: "#0c5460" },
+                { bid: "ICT Systems Upgrade", vendors: 18, deadline: "15 Jul", status: "Evaluation", statusBg: "#e2d9f3", statusColor: "#4a235a" },
+              ].map((b, i) => (
+                <div className="col-md-6" key={i}>
+                  <div className="p-3 rounded mb-2" style={{ background: "#f8f9fa", border: "1px solid #eee" }}>
+                    <div className="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                      <div>
+                        <p className="mb-1 fw-semibold" style={{ fontSize: "0.9rem" }}>{b.bid}</p>
+                        <span className="text-muted" style={{ fontSize: "0.82rem" }}>Vendors Submitted: <strong>{b.vendors}</strong></span>
+                      </div>
+                      <div className="text-end">
+                        <p className="mb-1 text-muted" style={{ fontSize: "0.82rem" }}>Deadline: <strong>{b.deadline}</strong></p>
+                        <span
+                          className="badge px-3 py-1"
+                          style={{ borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600, background: b.statusBg, color: b.statusColor }}
+                        >
+                          {b.status}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Ranked Table */}
+            <div className="table-responsive">
+              <table className="table table-hover mb-0" style={{ fontSize: "0.9rem" }}>
+                <thead style={{ background: "#f8f9fa" }}>
+                  <tr>
+                    <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Rank</th>
+                    <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Vendor</th>
+                    <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Bid</th>
+                    <th className="px-4 py-3 text-muted fw-semibold text-center" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { rank: 1, vendor: "ABC Construction", bid: "Road Project", score: 91 },
+                    { rank: 2, vendor: "Zenith Infrastructure", bid: "ICT Project", score: 87 },
+                    { rank: 3, vendor: "Omega Tech", bid: "ICT Project", score: 84 },
+                    { rank: 4, vendor: "Crestview Partners", bid: "Road Project", score: 80 },
+                    { rank: 5, vendor: "Delta Force Supplies", bid: "Road Project", score: 77 },
+                  ].map((row, i) => {
+                    const medal: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
+                    const scoreColor = row.score >= 90 ? "#155724" : row.score >= 80 ? "#0c5460" : "#856404";
+                    const scoreBg = row.score >= 90 ? "#d4edda" : row.score >= 80 ? "#d1ecf1" : "#fff3cd";
+                    return (
+                      <tr key={i} style={{ borderBottom: "1px solid #f0f0f0" }}>
+                        <td className="px-4 py-3">
+                          <span style={{ fontSize: "1.1rem" }}>{medal[row.rank] ?? `#${row.rank}`}</span>
+                        </td>
+                        <td className="px-4 py-3 fw-semibold">{row.vendor}</td>
+                        <td className="px-4 py-3 text-muted">{row.bid}</td>
+                        <td className="px-4 py-3 text-center">
+                          <span
+                            className="badge px-3 py-2"
+                            style={{ borderRadius: "20px", fontSize: "0.85rem", fontWeight: 700, background: scoreBg, color: scoreColor }}
+                          >
+                            {row.score}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

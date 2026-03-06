@@ -24,6 +24,11 @@ export const MenuList = [
       },
     ],
   },
+  {
+    title: "Bids",
+    iconStyle: <i className="material-symbols-outlined">gavel</i>,
+    to: "bids",
+  },
   /*{
     title: "Teacher",
     classsChange: "mm-collapse",

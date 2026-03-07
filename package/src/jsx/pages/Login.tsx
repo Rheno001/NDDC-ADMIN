@@ -3,34 +3,45 @@ import { Link, useNavigate } from "react-router-dom";
 import nddclogo from "../../assets/images/nddclogo.webp";
 
 interface Props {
-  setAuth: (auth: { email: string; password: string }) => void;
+  setAuth: (auth: { username: string; accessToken: string }) => void;
 }
 
 interface Errors {
-  email: string;
+  username: string;
   password: string;
 }
 
+interface LoginResponse {
+  success: boolean;
+  message: string;
+  timestamp: string;
+  data: {
+    accessToken: string;
+    refreshToken: string;
+  };
+}
+
 const Login: React.FC<Props> = ({ setAuth }) => {
-  const [email, setEmail] = useState<string>("demo@example.com");
-  const [password, setPassword] = useState<string>("123456");
-  const [errors, setErrors] = useState<Errors>({ email: "", password: "" });
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [errors, setErrors] = useState<Errors>({ username: "", password: "" });
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [failedAttempts, setFailedAttempts] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const isLockedOut = failedAttempts >= 3;
 
-  const onLogin = (e: React.FormEvent<HTMLFormElement>): void => {
+  const onLogin = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-
     if (isLockedOut) return;
 
-    const newErrors: Errors = { email: "", password: "" };
+    // Validation
+    const newErrors: Errors = { username: "", password: "" };
     let hasError = false;
 
-    if (!email) {
-      newErrors.email = "Email is required";
+    if (!username) {
+      newErrors.username = "Username is required";
       hasError = true;
     }
     if (!password) {
@@ -41,22 +52,48 @@ const Login: React.FC<Props> = ({ setAuth }) => {
     setErrors(newErrors);
     if (hasError) return;
 
-    // Simulate login and lockout condition
-    if (email !== "demo@example.com" || password !== "123456") {
-      setFailedAttempts((prev) => prev + 1);
-      setErrors({
-        email: "",
-        password: "Invalid credentials. Please try again.",
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/v1/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": import.meta.env.VITE_API_KEY,
+        },
+        body: JSON.stringify({ username, password }),
       });
-      return;
-    }
 
-    // Success
-    setFailedAttempts(0);
-    const user = { email, password };
-    localStorage.setItem("AUTH", JSON.stringify(user));
-    setAuth(user); // Update parent state
-    navigate("/dashboard"); // Redirect to dashboard
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        setFailedAttempts((prev) => prev + 1);
+        setErrors({
+          username: "",
+          password: errorData?.message ?? "Invalid credentials. Please try again.",
+        });
+        return;
+      }
+
+      const data: LoginResponse = await res.json();
+      const { accessToken, refreshToken } = data.data;
+
+      // Store tokens — never store passwords
+      sessionStorage.setItem("accessToken", accessToken);
+      sessionStorage.setItem("refreshToken", refreshToken);
+      sessionStorage.setItem("username", username);
+      sessionStorage.setItem("AUTH", JSON.stringify({ username, accessToken }));
+
+      setFailedAttempts(0);
+      setAuth({ username, accessToken });
+      navigate("/dashboard");
+
+    } catch {
+      setErrors({
+        username: "",
+        password: "Network error. Please check your connection and try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -67,7 +104,10 @@ const Login: React.FC<Props> = ({ setAuth }) => {
             <div className="card-body p-0">
               <div className="row m-0">
                 <div className="col-xl-6 col-md-6 bg-white d-flex align-items-center justify-content-center p-4">
-                  <Link to="#" className="w-100 h-100 d-flex align-items-center justify-content-center">
+                  <Link
+                    to="#"
+                    className="w-100 h-100 d-flex align-items-center justify-content-center"
+                  >
                     <img
                       className="img-fluid w-100 h-100"
                       style={{ objectFit: "contain" }}
@@ -76,16 +116,17 @@ const Login: React.FC<Props> = ({ setAuth }) => {
                     />
                   </Link>
                 </div>
+
                 <div className="col-xl-6 col-md-6">
                   <div className="sign-in-your px-2">
-                    <h4 className="fs-20 ">Sign in your account</h4>
+                    <h4 className="fs-20">Sign in your account</h4>
                     <span>
                       Welcome back! Login with your data that you entered during
                       registration
                     </span>
 
                     {isLockedOut ? (
-                      <div className="alert alert-danger mb-4">
+                      <div className="alert alert-danger mb-4 mt-3">
                         <strong>Account Locked</strong>
                         <p className="mb-0 mt-1">
                           You have exceeded the maximum number of login attempts.
@@ -93,33 +134,38 @@ const Login: React.FC<Props> = ({ setAuth }) => {
                         </p>
                       </div>
                     ) : (
-                      (errors.email || errors.password) && (
-                        <div className="alert alert-danger mb-4">
-                          <strong>Error:</strong> Please check your credentials and try again.
+                      (errors.username || errors.password) && (
+                        <div className="alert alert-danger mb-4 mt-3">
+                          <strong>Error:</strong>{" "}
+                          {errors.username || errors.password}
                         </div>
                       )
                     )}
+
                     <form onSubmit={onLogin}>
+                      {/* Username */}
                       <div className="mb-3">
                         <label className="mb-1">
-                          <strong>Email</strong>
+                          <strong>Username</strong>
                           <span className="required">*</span>
                         </label>
                         <input
-                          type="email"
-                          className={`form-control ${errors.email ? "is-invalid" : ""}`}
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="Type Your Email Address"
-                          disabled={isLockedOut}
+                          type="text"
+                          className={`form-control ${errors.username ? "is-invalid" : ""}`}
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                          placeholder="Type Your Username"
+                          disabled={isLockedOut || isLoading}
+                          autoComplete="username"
                         />
-
-                        {errors.email && (
+                        {errors.username && (
                           <div className="invalid-feedback d-block">
-                            {errors.email}
+                            {errors.username}
                           </div>
                         )}
                       </div>
+
+                      {/* Password */}
                       <div className="mb-3">
                         <label className="mb-1">
                           <strong>Password</strong>
@@ -132,13 +178,18 @@ const Login: React.FC<Props> = ({ setAuth }) => {
                             value={password}
                             placeholder="Type Your Password"
                             onChange={(e) => setPassword(e.target.value)}
-                            disabled={isLockedOut}
+                            disabled={isLockedOut || isLoading}
+                            autoComplete="current-password"
                             style={{ borderRight: "none" }}
                           />
                           <span
-                            className={`input-group-text bg-white cursor-pointer ${errors.password ? "border-danger" : ""}`}
-                            onClick={() => !isLockedOut && setShowPassword(!showPassword)}
-                            style={{ cursor: isLockedOut ? "not-allowed" : "pointer" }}
+                            className={`input-group-text bg-white ${errors.password ? "border-danger" : ""}`}
+                            onClick={() =>
+                              !isLockedOut && !isLoading && setShowPassword(!showPassword)
+                            }
+                            style={{
+                              cursor: isLockedOut || isLoading ? "not-allowed" : "pointer",
+                            }}
                           >
                             <i className={showPassword ? "fa fa-eye-slash" : "fa fa-eye"}></i>
                           </span>
@@ -149,11 +200,16 @@ const Login: React.FC<Props> = ({ setAuth }) => {
                           </div>
                         )}
                         <div className="text-end mt-2">
-                          <Link to="/page-forgot-password" className={isLockedOut ? "text-muted pe-none" : ""}>
+                          <Link
+                            to="/page-forgot-password"
+                            className={isLockedOut ? "text-muted pe-none" : ""}
+                          >
                             Forgot Password?
                           </Link>
                         </div>
                       </div>
+
+                      {/* Remember me */}
                       <div className="row d-flex justify-content-between mt-4 mb-2">
                         <div className="mb-3 w-100">
                           <div className="form-check custom-checkbox ms-1 d-flex">
@@ -172,13 +228,26 @@ const Login: React.FC<Props> = ({ setAuth }) => {
                           </div>
                         </div>
                       </div>
+
+                      {/* Submit */}
                       <div className="text-center">
                         <button
                           type="submit"
                           className="btn btn-primary btn-block"
-                          disabled={isLockedOut}
+                          disabled={isLockedOut || isLoading}
                         >
-                          Sign Me In
+                          {isLoading ? (
+                            <>
+                              <span
+                                className="spinner-border spinner-border-sm me-2"
+                                role="status"
+                                aria-hidden="true"
+                              ></span>
+                              Signing In…
+                            </>
+                          ) : (
+                            "Sign Me In"
+                          )}
                         </button>
                       </div>
                     </form>

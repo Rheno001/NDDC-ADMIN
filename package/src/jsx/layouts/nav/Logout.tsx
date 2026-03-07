@@ -5,9 +5,25 @@ import { ThemeContext } from "../../../context/ThemeContext";
 function LogoutPage() {
   const { setAuth } = useContext(ThemeContext);
   const navigate = useNavigate();
-  function handleLogout() {
-    // Your logout logic here
-    localStorage.removeItem("AUTH");
+  async function handleLogout() {
+    const refreshToken = sessionStorage.getItem("refreshToken");
+
+    if (refreshToken) {
+      try {
+        await fetch("/api/v1/auth/logout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": import.meta.env.VITE_API_KEY,
+          },
+          body: JSON.stringify({ refreshToken }),
+        });
+      } catch (error) {
+        console.error("Logout API request failed:", error);
+      }
+    }
+
+    sessionStorage.clear();
     setAuth(null);
     navigate("/login");
   }

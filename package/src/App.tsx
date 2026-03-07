@@ -9,7 +9,6 @@ import { Route, Routes, useNavigate, Navigate } from "react-router-dom";
 import Index from "./jsx/Index";
 
 import Login from "./jsx/pages/Login";
-import SignUp from "./jsx/pages/Registration";
 import { ThemeContext } from "./context/ThemeContext";
 
 
@@ -42,11 +41,11 @@ function App() {
 
   // Check authentication and handle navigation
   useEffect(() => {
-    const data = localStorage.getItem("AUTH");
+    const data = sessionStorage.getItem("AUTH");
     if (data) {
       const parsedData = JSON.parse(data);
       setAuth(parsedData); // Update auth context
-      if (parsedData?.email && parsedData?.password) {
+      if (parsedData?.username && parsedData?.accessToken) {
         // navigate("/dashboard");
       }
     } else {
@@ -55,7 +54,7 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (auth?.email && auth?.password) {
+  if (auth?.username && auth?.accessToken) {
     return (
       <Fragment>
         <Suspense
@@ -90,7 +89,6 @@ function App() {
           >
             <Routes>
               <Route path="/login" element={<Login setAuth={setAuth} />} />
-              <Route path="/page-register" element={<SignUp />} />
               <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
           </Suspense>

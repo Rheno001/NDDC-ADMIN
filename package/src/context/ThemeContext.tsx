@@ -7,8 +7,8 @@ import {
 } from "react";
 
 interface AuthData {
-  email: string;
-  password: string;
+  username: string;
+  accessToken: string;
 }
 
 // Define the shape of the AppContext
@@ -24,11 +24,11 @@ interface AppContextValue {
 // Provide a default state for the context
 const defaultState: AppContextValue = {
   openMenuToggle: false,
-  setOpenMenuToggle: () => {},
+  setOpenMenuToggle: () => { },
   auth: null,
-  setAuth: () => {},
+  setAuth: () => { },
   iconhover: false,
-  setIconhover: () => {},
+  setIconhover: () => { },
 };
 
 export const ThemeContext = createContext<AppContextValue>(defaultState);

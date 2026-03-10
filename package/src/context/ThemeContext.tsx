@@ -41,7 +41,10 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
   children,
 }) => {
   const [openMenuToggle, setOpenMenuToggle] = useState<boolean>(false);
-  const [auth, setAuth] = useState<AuthData | null>(null);
+  const [auth, setAuth] = useState<AuthData | null>(() => {
+    const stored = sessionStorage.getItem("AUTH");
+    return stored ? JSON.parse(stored) : null;
+  });
   const [iconhover, setIconhover] = useState<boolean>(false);
 
   return (

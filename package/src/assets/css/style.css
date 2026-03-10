@@ -37982,4 +37982,12 @@ input[type=date]::-webkit-calendar-picker-indicator {
   color: #fff;
 }
 
+.dropdown-menu[style*="position: fixed"]:not([data-popper-placement]) {
+  visibility: hidden !important;
+}
+
+.table-responsive .dropdown-menu {
+  z-index: 1050;
+}
+
 /*# sourceMappingURL=style.css.map */

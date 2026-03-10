@@ -87,7 +87,7 @@ const VendorDetails = () => {
                 <Dropdown.Toggle as="div" className="i-false btn sharp tp-btn ">
                   {SVGICON.dots}
                 </Dropdown.Toggle>
-                <Dropdown.Menu className="dropdown-menu-end" align="end">
+                <Dropdown.Menu className="dropdown-menu-end" align="end" renderOnMount>
                   <Dropdown.Item>Option 1</Dropdown.Item>
                   <Dropdown.Item>Option 2</Dropdown.Item>
                   <Dropdown.Item>Option 3</Dropdown.Item>

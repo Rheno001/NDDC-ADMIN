@@ -107,3 +107,9 @@
 // Version Color
 ////////////////////
 @import "./layout/version-dark/main";
+.dropdown-menu[style*="position: fixed"]:not([data-popper-placement]) {
+    visibility: hidden !important;
+}
+.table-responsive .dropdown-menu {
+    z-index: 1050;
+}

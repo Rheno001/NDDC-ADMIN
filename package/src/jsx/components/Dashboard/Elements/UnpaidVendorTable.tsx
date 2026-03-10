@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useMemo } from "react";
 import { Dropdown } from "react-bootstrap";
+import { TanStackTable } from "../../Common/TanStackTable";
+import { ColumnDef, Row } from "@tanstack/react-table";
 
 interface tableDataType {
   id: string;
@@ -24,148 +25,84 @@ const tableData: tableDataType[] = [
   { id: "7", initials: "SD", companyName: "Swift Delivery Services", rcNumber: "RC 5566778899", category: "Logistics", registration: "Admin", status: "Approved" },
   { id: "8", initials: "BS", companyName: "Bright Sparks Electricals", rcNumber: "RC 2233445566", category: "Electricals", registration: "Public", status: "Approved" },
 ];
+
 export const UnpaidVendorTable = () => {
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const recordsPage: number = 5;
-  const lastIndex: number = currentPage * recordsPage;
-  const firstIndex: number = lastIndex - recordsPage;
-  const records: tableDataType[] = tableData.slice(firstIndex, lastIndex);
-  const npage: number = Math.ceil(tableData.length / recordsPage);
-  const number: number[] = [...Array(npage + 1).keys()].slice(1);
-  function prePage() {
-    if (currentPage !== 1) {
-      setCurrentPage(currentPage - 1);
+  const columns = useMemo<ColumnDef<tableDataType>[]>(() => [
+    {
+      header: "Company Name",
+      accessorKey: "companyName",
+      cell: ({ row }: { row: Row<tableDataType> }) => (
+        <div className="trans-list d-flex align-items-center">
+          <div
+            className="avatar avatar-sm me-3 bg-primary d-flex align-items-center justify-content-center text-white fw-bold"
+            style={{ borderRadius: "50%", fontSize: "0.75rem", minWidth: 36, height: 36 }}
+          >
+            {row.original.initials}
+          </div>
+          <span style={{ fontWeight: 400 }}>{row.original.companyName}</span>
+        </div>
+      ),
+    },
+    {
+      header: "RC Number",
+      accessorKey: "rcNumber",
+      cell: ({ row }: { row: Row<tableDataType> }) => (
+        <span className="text-primary">{row.original.rcNumber}</span>
+      ),
+    },
+    {
+      header: "Category",
+      accessorKey: "category",
+      cell: ({ row }: { row: Row<tableDataType> }) => (
+        <span className="text-primary">{row.original.category}</span>
+      ),
+    },
+    {
+      header: "Registration",
+      accessorKey: "registration",
+      cell: ({ row }: { row: Row<tableDataType> }) => (
+        <span className="px-2">{row.original.registration}</span>
+      ),
+    },
+    {
+      header: "Status",
+      accessorKey: "status",
+      cell: ({ row }: { row: Row<tableDataType> }) => (
+        <span className="badge badge-success light">{row.original.status}</span>
+      ),
+    },
+    {
+      header: "Action",
+      id: "actions",
+      cell: () => (
+        <Dropdown className="custom-dropdown">
+          <Dropdown.Toggle as="div" className="btn sharp tp-btn i-false">
+            <svg width="18" height="6" viewBox="0 0 24 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12.0012 0.359985C11.6543 0.359985 11.3109 0.428302 10.9904 0.561035C10.67 0.693767 10.3788 0.888317 10.1335 1.13358C9.88829 1.37883 9.69374 1.67 9.56101 1.99044C9.42828 2.31089 9.35996 2.65434 9.35996 3.00119C9.35996 3.34803 9.42828 3.69148 9.56101 4.01193C9.69374 4.33237 9.88829 4.62354 10.1335 4.8688C10.3788 5.11405 10.67 5.3086 10.9904 5.44134C11.3109 5.57407 11.6543 5.64239 12.0012 5.64239C12.7017 5.64223 13.3734 5.36381 13.8686 4.86837C14.3638 4.37294 14.6419 3.70108 14.6418 3.00059C14.6416 2.3001 14.3632 1.62836 13.8677 1.13315C13.3723 0.637942 12.7004 0.359826 12 0.359985H12.0012ZM3.60116 0.359985C3.25431 0.359985 2.91086 0.428302 2.59042 0.561035C2.26997 0.693767 1.97881 0.888317 1.73355 1.13358C1.48829 1.37883 1.29374 1.67 1.16101 1.99044C1.02828 2.31089 0.959961 2.65434 0.959961 3.00119C0.959961 3.34803 1.02828 3.69148 1.16101 4.01193C1.29374 4.33237 1.48829 4.62354 1.73355 4.8688C1.97881 5.11405 2.26997 5.3086 2.59042 5.44134C2.91086 5.57407 3.25431 5.64239 3.60116 5.64239C4.30165 5.64223 4.97339 5.36381 5.4686 4.86837C5.9638 4.37294 6.24192 3.70108 6.24176 3.00059C6.2416 2.3001 5.96318 1.62836 5.46775 1.13315C4.97231 0.637942 4.30045 0.359826 3.59996 0.359985H3.60116ZM20.4012 0.359985C20.0543 0.359985 19.7109 0.428302 19.3904 0.561035C19.07 0.693767 18.7788 0.888317 18.5336 1.13358C18.2883 1.37883 18.0937 1.67 17.961 1.99044C17.8283 2.31089 17.76 2.65434 17.76 3.00119C17.76 3.34803 17.8283 3.69148 17.961 4.01193C18.0937 4.33237 18.2883 4.62354 18.5336 4.8688C18.7788 5.11405 19.07 5.3086 19.3904 5.44134C19.7109 5.57407 20.0543 5.64239 20.4012 5.64239C21.1017 5.64223 21.7734 5.36381 22.2686 4.86837C22.7638 4.37294 23.0419 3.70108 23.0418 3.00059C23.0416 2.3001 22.7632 1.62836 22.2677 1.13315C21.7723 0.637942 21.1005 0.359826 20.4 0.359985H20.4012Z" fill="#A098AE" />
+            </svg>
+          </Dropdown.Toggle>
+          <Dropdown.Menu className="dropdown-menu-end" align="end" renderOnMount>
+            <Dropdown.Item>Draft</Dropdown.Item>
+            <Dropdown.Item>Invited</Dropdown.Item>
+            <Dropdown.Item>Pending Activation</Dropdown.Item>
+            <Dropdown.Item>Active</Dropdown.Item>
+            <Dropdown.Item>Suspended</Dropdown.Item>
+            <Dropdown.Item>Blacklisted</Dropdown.Item>
+            <Dropdown.Item>Archived</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      ),
     }
-  }
-  function changeCPage(id: number) {
-    setCurrentPage(id);
-  }
-  function nextPage() {
-    if (currentPage !== npage) {
-      setCurrentPage(currentPage + 1);
-    }
-  }
+  ], []);
+
   return (
     <div className="table-responsive basic-tbl">
       <div id="teacher-table_wrapper" className="dataTables_wrapper no-footer">
-        <table id="example-1" className="display dataTable no-footer w-100">
-          <thead>
-            <tr>
-              <th style={{ fontWeight: 700, fontSize: "1rem" }}>Company Name</th>
-              <th style={{ fontWeight: 700, fontSize: "1rem" }}>RC Number</th>
-              <th style={{ fontWeight: 700, fontSize: "1rem" }}>Category</th>
-              <th style={{ fontWeight: 700, fontSize: "1rem" }}>Registration</th>
-              <th style={{ fontWeight: 700, fontSize: "1rem" }}>Status</th>
-              <th style={{ fontWeight: 700, fontSize: "1rem" }}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {records.map((item, ind) => (
-              <tr key={ind}>
-                <td>
-                  <div className="trans-list d-flex align-items-center">
-                    <div
-                      className="avatar avatar-sm me-3 bg-primary d-flex align-items-center justify-content-center text-white fw-bold"
-                      style={{ borderRadius: "50%", fontSize: "0.75rem", minWidth: 36, height: 36 }}
-                    >
-                      {item.initials}
-                    </div>
-                    <span style={{ fontWeight: 400 }}>{item.companyName}</span>
-                  </div>
-                </td>
-                <td>
-                  <span className="text-primary">{item.rcNumber}</span>
-                </td>
-                <td>
-                  <div className="d-flex align-items-center">
-                    <div className="ms-2">
-                      <span className="text-primary mb-0">
-                        {item.category}
-                      </span>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <span className="px-2">{item.registration}</span>
-                </td>
-                <td>
-                  <span className="badge badge-success light">{item.status}</span>
-                </td>
-                <td>
-                  <ul className="tbl-action">
-                    <li>
-                      <>
-                        <Dropdown className="custom-dropdown ">
-                          <Dropdown.Toggle
-                            as="div"
-                            className="btn sharp tp-btn i-false"
-                          >
-                            <svg
-                              width="18"
-                              height="6"
-                              viewBox="0 0 24 6"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M12.0012 0.359985C11.6543 0.359985 11.3109 0.428302 10.9904 0.561035C10.67 0.693767 10.3788 0.888317 10.1335 1.13358C9.88829 1.37883 9.69374 1.67 9.56101 1.99044C9.42828 2.31089 9.35996 2.65434 9.35996 3.00119C9.35996 3.34803 9.42828 3.69148 9.56101 4.01193C9.69374 4.33237 9.88829 4.62354 10.1335 4.8688C10.3788 5.11405 10.67 5.3086 10.9904 5.44134C11.3109 5.57407 11.6543 5.64239 12.0012 5.64239C12.7017 5.64223 13.3734 5.36381 13.8686 4.86837C14.3638 4.37294 14.6419 3.70108 14.6418 3.00059C14.6416 2.3001 14.3632 1.62836 13.8677 1.13315C13.3723 0.637942 12.7004 0.359826 12 0.359985H12.0012ZM3.60116 0.359985C3.25431 0.359985 2.91086 0.428302 2.59042 0.561035C2.26997 0.693767 1.97881 0.888317 1.73355 1.13358C1.48829 1.37883 1.29374 1.67 1.16101 1.99044C1.02828 2.31089 0.959961 2.65434 0.959961 3.00119C0.959961 3.34803 1.02828 3.69148 1.16101 4.01193C1.29374 4.33237 1.48829 4.62354 1.73355 4.8688C1.97881 5.11405 2.26997 5.3086 2.59042 5.44134C2.91086 5.57407 3.25431 5.64239 3.60116 5.64239C4.30165 5.64223 4.97339 5.36381 5.4686 4.86837C5.9638 4.37294 6.24192 3.70108 6.24176 3.00059C6.2416 2.3001 5.96318 1.62836 5.46775 1.13315C4.97231 0.637942 4.30045 0.359826 3.59996 0.359985H3.60116ZM20.4012 0.359985C20.0543 0.359985 19.7109 0.428302 19.3904 0.561035C19.07 0.693767 18.7788 0.888317 18.5336 1.13358C18.2883 1.37883 18.0937 1.67 17.961 1.99044C17.8283 2.31089 17.76 2.65434 17.76 3.00119C17.76 3.34803 17.8283 3.69148 17.961 4.01193C18.0937 4.33237 18.2883 4.62354 18.5336 4.8688C18.7788 5.11405 19.07 5.3086 19.3904 5.44134C19.7109 5.57407 20.0543 5.64239 20.4012 5.64239C21.1017 5.64223 21.7734 5.36381 22.2686 4.86837C22.7638 4.37294 23.0419 3.70108 23.0418 3.00059C23.0416 2.3001 22.7632 1.62836 22.2677 1.13315C21.7723 0.637942 21.1005 0.359826 20.4 0.359985H20.4012Z"
-                                fill="#A098AE"
-                              />
-                            </svg>
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu className="dropdown-menu dropdown-menu-end">
-                            <Dropdown.Item>Draft</Dropdown.Item>
-                            <Dropdown.Item>Invited</Dropdown.Item>
-                            <Dropdown.Item>Pending Activation</Dropdown.Item>
-                            <Dropdown.Item>Active</Dropdown.Item>
-                            <Dropdown.Item>Suspended</Dropdown.Item>
-                            <Dropdown.Item>Blacklisted</Dropdown.Item>
-                            <Dropdown.Item>Archived</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </>
-                    </li>
-                  </ul>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="d-sm-flex text-center justify-content-between align-items-center">
-          <div className="dataTables_info">
-            Showing {lastIndex - recordsPage + 1} to{" "}
-            {tableData.length < lastIndex ? tableData.length : lastIndex} of{" "}
-            {tableData.length} entries
-          </div>
-          <div
-            className="dataTables_paginate paging_simple_numbers justify-content-center"
-            id="example2_paginate"
-          >
-            <Link
-              className="paginate_button previous disabled"
-              to="#"
-              onClick={prePage}
-            >
-              <i className="fa-solid fa-angle-left" />
-            </Link>
-            <span>
-              {number.map((n, i) => (
-                <Link
-                  to={"#"}
-                  className={`paginate_button ${currentPage === n ? "current" : ""
-                    } `}
-                  key={i}
-                  onClick={() => changeCPage(n)}
-                >
-                  {n}
-                </Link>
-              ))}
-            </span>
-            <Link className="paginate_button next" to="#" onClick={nextPage}>
-              <i className="fa-solid fa-angle-right" />
-            </Link>
-          </div>
-        </div>
+        <TanStackTable
+          data={tableData}
+          columns={columns}
+          enableSelection={false}
+        />
       </div>
     </div>
   );

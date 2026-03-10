@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import nddclogo from "../../assets/images/nddclogo.webp";
+import bgImage from "../../assets/images/nddc-login.jpeg";
+import "./Login.css";
 
 interface Props {
   setAuth: (auth: { username: string; accessToken: string }) => void;
@@ -97,165 +98,144 @@ const Login: React.FC<Props> = ({ setAuth }) => {
   };
 
   return (
-    <div className="container h-100">
-      <div className="row h-100 align-items-center justify-contain-center">
-        <div className="col-xl-12">
-          <div className="card">
-            <div className="card-body p-0">
-              <div className="row m-0">
-                <div className="col-xl-6 col-md-6 bg-white d-flex align-items-center justify-content-center p-4">
-                  <Link
-                    to="#"
-                    className="w-100 h-100 d-flex align-items-center justify-content-center"
-                  >
-                    <img
-                      className="img-fluid w-100 h-100"
-                      style={{ objectFit: "contain" }}
-                      src={nddclogo}
-                      alt="NDDC Logo"
-                    />
-                  </Link>
-                </div>
+    <div className="login-page-wrapper">
+      <div className="login-card">
+        {/* Left Panel - Branding */}
+        <div
+          className="login-brand-panel"
+          style={{ backgroundImage: `url(${bgImage})` }}
+        >
+          <div className="brand-logo-section">
+            <h1 className="brand-tagline">NDDC Admin Portal</h1>
+            <p className="brand-subtitle">
+              Secure administration gateway for managing the Niger Delta
+              Development Commission's core operations and resources.
+            </p>
+          </div>
+          <div className="brand-illustration">
+            {/* You can add an illustration image here if available */}
+          </div>
+        </div>
 
-                <div className="col-xl-6 col-md-6">
-                  <div className="sign-in-your px-2">
-                    <h4 className="fs-20">Sign in your account</h4>
-                    <span>
-                      Welcome back! Login with your data that you entered during
-                      registration
-                    </span>
+        {/* Right Panel - Form */}
+        <div className="login-form-panel">
+          <div className="login-form-header">
+            <h4>Sign in to your account</h4>
+            <p>Enter your administrator credentials to access the portal</p>
+          </div>
 
-                    {isLockedOut ? (
-                      <div className="alert alert-danger mb-4 mt-3">
-                        <strong>Account Locked</strong>
-                        <p className="mb-0 mt-1">
-                          You have exceeded the maximum number of login attempts.
-                          Please try again later or contact support.
-                        </p>
-                      </div>
-                    ) : (
-                      (errors.username || errors.password) && (
-                        <div className="alert alert-danger mb-4 mt-3">
-                          <strong>Error:</strong>{" "}
-                          {errors.username || errors.password}
-                        </div>
-                      )
-                    )}
-
-                    <form onSubmit={onLogin}>
-                      {/* Username */}
-                      <div className="mb-3">
-                        <label className="mb-1">
-                          <strong>Username</strong>
-                          <span className="required">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          className={`form-control ${errors.username ? "is-invalid" : ""}`}
-                          value={username}
-                          onChange={(e) => setUsername(e.target.value)}
-                          placeholder="Type Your Username"
-                          disabled={isLockedOut || isLoading}
-                          autoComplete="username"
-                        />
-                        {errors.username && (
-                          <div className="invalid-feedback d-block">
-                            {errors.username}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Password */}
-                      <div className="mb-3">
-                        <label className="mb-1">
-                          <strong>Password</strong>
-                          <span className="required">*</span>
-                        </label>
-                        <div className="input-group">
-                          <input
-                            type={showPassword ? "text" : "password"}
-                            className={`form-control ${errors.password ? "is-invalid" : ""}`}
-                            value={password}
-                            placeholder="Type Your Password"
-                            onChange={(e) => setPassword(e.target.value)}
-                            disabled={isLockedOut || isLoading}
-                            autoComplete="current-password"
-                            style={{ borderRight: "none" }}
-                          />
-                          <span
-                            className={`input-group-text bg-white ${errors.password ? "border-danger" : ""}`}
-                            onClick={() =>
-                              !isLockedOut && !isLoading && setShowPassword(!showPassword)
-                            }
-                            style={{
-                              cursor: isLockedOut || isLoading ? "not-allowed" : "pointer",
-                            }}
-                          >
-                            <i className={showPassword ? "fa fa-eye-slash" : "fa fa-eye"}></i>
-                          </span>
-                        </div>
-                        {errors.password && (
-                          <div className="invalid-feedback d-block">
-                            {errors.password}
-                          </div>
-                        )}
-                        <div className="text-end mt-2">
-                          <Link
-                            to="/page-forgot-password"
-                            className={isLockedOut ? "text-muted pe-none" : ""}
-                          >
-                            Forgot Password?
-                          </Link>
-                        </div>
-                      </div>
-
-                      {/* Remember me */}
-                      <div className="row d-flex justify-content-between mt-4 mb-2">
-                        <div className="mb-3 w-100">
-                          <div className="form-check custom-checkbox ms-1 d-flex">
-                            <input
-                              type="checkbox"
-                              className="form-check-input"
-                              id="basic_checkbox_1"
-                              required
-                            />
-                            <label
-                              className="form-check-label ms-2"
-                              htmlFor="basic_checkbox_1"
-                            >
-                              Remember my preference
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Submit */}
-                      <div className="text-center">
-                        <button
-                          type="submit"
-                          className="btn btn-primary btn-block"
-                          disabled={isLockedOut || isLoading}
-                        >
-                          {isLoading ? (
-                            <>
-                              <span
-                                className="spinner-border spinner-border-sm me-2"
-                                role="status"
-                                aria-hidden="true"
-                              ></span>
-                              Signing In…
-                            </>
-                          ) : (
-                            "Sign Me In"
-                          )}
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
+          {isLockedOut ? (
+            <div className="login-error-banner">
+              <div className="error-icon">
+                <i className="fa fa-lock"></i>
+              </div>
+              <div className="error-text">
+                Your account is locked due to multiple failed attempts. Please
+                try again later or contact support.
               </div>
             </div>
-          </div>
+          ) : (
+            (errors.username || errors.password) && (
+              <div className="login-error-banner">
+                <div className="error-icon">
+                  <i className="fa fa-exclamation-triangle"></i>
+                </div>
+                <div className="error-text">
+                  {errors.username || errors.password}
+                </div>
+              </div>
+            )
+          )}
+
+          <form onSubmit={onLogin}>
+            {/* Username Field */}
+            <div className="login-form-group">
+              <label>
+                Username <span className="required-star">*</span>
+              </label>
+              <div
+                className={`login-input-wrapper ${errors.username ? "has-error" : ""}`}
+              >
+                <i className="fa fa-user input-icon"></i>
+                <input
+                  type="text"
+                  placeholder="Enter your username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  disabled={isLockedOut || isLoading}
+                  autoComplete="username"
+                />
+              </div>
+              {errors.username && (
+                <div className="field-error">
+                  <i className="fa fa-info-circle"></i> {errors.username}
+                </div>
+              )}
+            </div>
+
+            {/* Password Field */}
+            <div className="login-form-group">
+              <label>
+                Password <span className="required-star">*</span>
+              </label>
+              <div
+                className={`login-input-wrapper ${errors.password ? "has-error" : ""}`}
+              >
+                <i className="fa fa-lock input-icon"></i>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLockedOut || isLoading}
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  className="toggle-password-btn"
+                  onClick={() =>
+                    !isLockedOut && !isLoading && setShowPassword(!showPassword)
+                  }
+                  tabIndex={-1}
+                >
+                  <i className={showPassword ? "fa fa-eye-slash" : "fa fa-eye"}></i>
+                </button>
+              </div>
+              {errors.password && (
+                <div className="field-error">
+                  <i className="fa fa-info-circle"></i> {errors.password}
+                </div>
+              )}
+            </div>
+
+            <div className="login-options-row">
+              <label className="remember-me-check">
+                <input type="checkbox" id="basic_checkbox_1" />
+                <span>Remember my preference</span>
+              </label>
+              <Link
+                to="/page-forgot-password"
+                className={`forgot-password-link ${isLockedOut ? "text-muted pe-none" : ""}`}
+              >
+                Forgot Password?
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              className="login-submit-btn"
+              disabled={isLockedOut || isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <span className="btn-spinner"></span>
+                  Signing In...
+                </>
+              ) : (
+                "Sign In"
+              )}
+            </button>
+          </form>
         </div>
       </div>
     </div>

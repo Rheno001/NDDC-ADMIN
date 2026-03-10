@@ -27,7 +27,6 @@ import AddNewVendor from "./components/Vendor/AddNewVendor";
 
 //bids
 import Bids from "./components/Bids/Bids";
-import BidEvaluation from "./components/Bids/BidEvaluation";
 
 
 
@@ -61,7 +60,6 @@ const Markup = () => {
           <Route path="/vendor-details" element={<VendorDetails />} />
           <Route path="/add-vendor" element={<AddNewVendor />} />
           <Route path="/bids" element={<Bids />} />
-          <Route path="/bid-evaluation" element={<BidEvaluation />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

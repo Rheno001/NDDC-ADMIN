@@ -2,6 +2,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import "nouislider/distribute/nouislider.css";
 import "ckeditor5/ckeditor5.css";
 import "./assets/css/style.css";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { Fragment, Suspense, useContext, useEffect } from "react";
 import { Route, Routes, useNavigate, Navigate } from "react-router-dom";
@@ -41,18 +43,11 @@ function App() {
 
   // Check authentication and handle navigation
   useEffect(() => {
-    const data = sessionStorage.getItem("AUTH");
-    if (data) {
-      const parsedData = JSON.parse(data);
-      setAuth(parsedData); // Update auth context
-      if (parsedData?.username && parsedData?.accessToken) {
-        // navigate("/dashboard");
-      }
-    } else {
+    if (!auth?.username || !auth?.accessToken) {
       navigate("/login");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [auth]);
 
   if (auth?.username && auth?.accessToken) {
     return (
@@ -70,6 +65,7 @@ function App() {
         >
           <Index />
         </Suspense>
+        <ToastContainer />
       </Fragment>
     );
   } else {
@@ -93,6 +89,7 @@ function App() {
             </Routes>
           </Suspense>
         </div>
+        <ToastContainer />
       </Fragment>
     );
   }

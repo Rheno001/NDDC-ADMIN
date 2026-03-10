@@ -3,11 +3,13 @@
 //Import Components
 
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Tab, Nav } from "react-bootstrap";
 /* import { TeacherDetails } from "./Elements/TeacherDetails"; */
 import { UnpaidVendorTable } from "./Elements/UnpaidVendorTable";
 import VendorActivity from "./Elements/VendorActivity";
+import { TanStackTable } from "../Common/TanStackTable";
+import { ColumnDef, Row } from "@tanstack/react-table";
+import { useMemo } from "react";
 
 const statCards = [
   {
@@ -85,24 +87,6 @@ const Home = () => {
   // const [startDate, setStartDate] = useState<null | Date | undefined>(null);
   const [docRows, setDocRows] = useState(initialDocs.filter(d => d.status === "Pending"));
 
-  // Pagination – doc queue
-  const docPageSize = 3;
-  const [docPage, setDocPage] = useState(1);
-  const docLastIdx = docPage * docPageSize;
-  const docFirstIdx = docLastIdx - docPageSize;
-  const docPageCount = Math.ceil(docRows.length / docPageSize);
-  const docPageNums = [...Array(docPageCount + 1).keys()].slice(1);
-  const pagedDocs = docRows.slice(docFirstIdx, docLastIdx);
-
-  // Pagination – bid submissions
-  const bidPageSize = 4;
-  const [bidPage, setBidPage] = useState(1);
-  const bidLastIdx = bidPage * bidPageSize;
-  const bidFirstIdx = bidLastIdx - bidPageSize;
-  const bidPageCount = Math.ceil(bidData.length / bidPageSize);
-  const bidPageNums = [...Array(bidPageCount + 1).keys()].slice(1);
-  const pagedBids = bidData.slice(bidFirstIdx, bidLastIdx);
-
   const handleActionChange = (index: number, action: string) => {
     const nextStatus: Record<string, DocStatus> = {
       approve: "Approved",
@@ -115,6 +99,130 @@ const Home = () => {
       prev.map((row, i) => i === index ? { ...row, status: nextStatus[action] } : row)
     );
   };
+
+  const docQueueColumns = useMemo<ColumnDef<any>[]>(() => [
+    {
+      header: "Vendor",
+      accessorKey: "vendor",
+      cell: ({ row }: { row: Row<any> }) => <span className="fw-semibold">{row.original.vendor}</span>,
+    },
+    {
+      header: "Document",
+      accessorKey: "doc",
+    },
+    {
+      header: "Date Uploaded",
+      accessorKey: "date",
+    },
+    {
+      header: "Status",
+      accessorKey: "status",
+      cell: ({ row }: { row: Row<any> }) => {
+        const s = statusStyle[row.original.status as DocStatus];
+        return (
+          <span
+            className="badge px-3 py-2"
+            style={{ borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600, background: s.bg, color: s.color }}
+          >
+            {row.original.status}
+          </span>
+        );
+      },
+    },
+    {
+      header: "Action",
+      id: "actions",
+      cell: ({ row }: { row: Row<any> }) => (
+        <select
+          className="form-select form-select-sm"
+          defaultValue=""
+          onChange={(e) => handleActionChange(row.index, e.target.value)}
+          style={{ borderRadius: "20px", fontSize: "0.8rem", width: "100%", cursor: "pointer" }}
+        >
+          <option value="" disabled>Select action…</option>
+          <option value="approve">✅ Approve</option>
+          <option value="reject">❌ Reject</option>
+          <option value="reupload">🔁 Request Reupload</option>
+        </select>
+      ),
+    }
+  ], [handleActionChange]);
+
+  const bidOverviewColumns = useMemo<ColumnDef<any>[]>(() => [
+    {
+      header: "Bid Title",
+      accessorKey: "title",
+      cell: ({ row }: { row: Row<any> }) => <span className="fw-semibold">{row.original.title}</span>,
+    },
+    {
+      header: "Vendors Submitted",
+      accessorKey: "vendors",
+      cell: ({ row }: { row: Row<any> }) => (
+        <div className="text-center">
+          <span className="badge bg-light text-dark px-3 py-2" style={{ borderRadius: "20px", fontWeight: 700, fontSize: "0.85rem" }}>
+            {row.original.vendors}
+          </span>
+        </div>
+      ),
+    },
+    {
+      header: "Deadline",
+      accessorKey: "deadline",
+    },
+    {
+      header: "Status",
+      accessorKey: "status",
+      cell: ({ row }: { row: Row<any> }) => {
+        const s = bidStatusStyle[row.original.status] ?? { bg: "#eee", color: "#333" };
+        return (
+          <span
+            className="badge px-3 py-2"
+            style={{ borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600, background: s.bg, color: s.color }}
+          >
+            {row.original.status}
+          </span>
+        );
+      },
+    },
+  ], []);
+
+  const rankedVendorColumns = useMemo<ColumnDef<any>[]>(() => [
+    {
+      header: "Rank",
+      accessorKey: "rank",
+      cell: ({ row }: { row: Row<any> }) => {
+        const medal: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
+        return <span style={{ fontSize: "1.1rem" }}>{medal[row.original.rank] ?? `#${row.original.rank}`}</span>;
+      },
+    },
+    {
+      header: "Vendor",
+      accessorKey: "vendor",
+      cell: ({ row }: { row: Row<any> }) => <span className="fw-semibold">{row.original.vendor}</span>,
+    },
+    {
+      header: "Bid",
+      accessorKey: "bid",
+    },
+    {
+      header: "Score",
+      accessorKey: "score",
+      cell: ({ row }: { row: Row<any> }) => {
+        const scoreColor = row.original.score >= 90 ? "#155724" : row.original.score >= 80 ? "#0c5460" : "#856404";
+        const scoreBg = row.original.score >= 90 ? "#d4edda" : row.original.score >= 80 ? "#d1ecf1" : "#fff3cd";
+        return (
+          <div className="text-center">
+            <span
+              className="badge px-3 py-2"
+              style={{ borderRadius: "20px", fontSize: "0.85rem", fontWeight: 700, background: scoreBg, color: scoreColor }}
+            >
+              {row.original.score}
+            </span>
+          </div>
+        );
+      },
+    },
+  ], []);
 
   useEffect(() => {
     document.body.setAttribute("data-theme-version", "light");
@@ -433,85 +541,11 @@ const Home = () => {
           <div className="card-body p-0">
             <div className="table-responsive basic-tbl">
               <div id="doc-queue-table_wrapper" className="dataTables_wrapper no-footer">
-                <table className="display dataTable no-footer w-100" style={{ fontSize: "0.9rem" }}>
-                  <thead style={{ background: "#f8f9fa" }}>
-                    <tr>
-                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Vendor</th>
-                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Document</th>
-                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Date Uploaded</th>
-                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Status</th>
-                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pagedDocs.map((row, i) => {
-                      const absIdx = docFirstIdx + i;
-                      const s = statusStyle[row.status];
-                      return (
-                        <tr key={absIdx} style={{ borderBottom: "1px solid #f0f0f0" }}>
-                          <td className="px-4 py-3 fw-semibold">{row.vendor}</td>
-                          <td className="px-4 py-3 text-muted">{row.doc}</td>
-                          <td className="px-4 py-3 text-muted">{row.date}</td>
-                          <td className="px-4 py-3">
-                            <span
-                              className="badge px-3 py-2"
-                              style={{ borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600, background: s.bg, color: s.color }}
-                            >
-                              {row.status}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3" style={{ maxWidth: "170px" }}>
-                            <select
-                              className="form-select form-select-sm"
-                              defaultValue=""
-                              onChange={(e) => handleActionChange(absIdx, e.target.value)}
-                              style={{ borderRadius: "20px", fontSize: "0.8rem", width: "100%", cursor: "pointer" }}
-                            >
-                              <option value="" disabled>Select action…</option>
-                              <option value="approve">✅ Approve</option>
-                              <option value="reject">❌ Reject</option>
-                              <option value="reupload">🔁 Request Reupload</option>
-                            </select>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-                <div className="d-sm-flex text-center justify-content-between align-items-center">
-                  <div className="dataTables_info">
-                    Showing {docLastIdx - docPageSize + 1} to{" "}
-                    {docRows.length < docLastIdx ? docRows.length : docLastIdx} of{" "}
-                    {docRows.length} entries
-                  </div>
-                  <div
-                    className="dataTables_paginate paging_simple_numbers justify-content-center"
-                    id="doc-queue_paginate"
-                  >
-                    <Link
-                      className="paginate_button previous disabled"
-                      to="#"
-                      onClick={() => setDocPage(p => Math.max(p - 1, 1))}
-                    >
-                      <i className="fa-solid fa-angle-left" />
-                    </Link>
-                    <span>
-                      {docPageNums.map((n, i) => (
-                        <Link
-                          to={"#"}
-                          className={`paginate_button ${docPage === n ? "current" : ""} `}
-                          key={i}
-                          onClick={() => setDocPage(n)}
-                        >
-                          {n}
-                        </Link>
-                      ))}
-                    </span>
-                    <Link className="paginate_button next" to="#" onClick={() => setDocPage(p => Math.min(p + 1, docPageCount))}>
-                      <i className="fa-solid fa-angle-right" />
-                    </Link>
-                  </div>
-                </div>
+                <TanStackTable
+                  data={docRows}
+                  columns={docQueueColumns}
+                  enableSelection={false}
+                />
               </div>
             </div>
           </div>
@@ -530,72 +564,11 @@ const Home = () => {
           <div className="card-body p-0">
             <div className="table-responsive basic-tbl">
               <div id="bid-overview-table_wrapper" className="dataTables_wrapper no-footer">
-                <table className="display dataTable no-footer w-100" style={{ fontSize: "0.9rem" }}>
-                  <thead style={{ background: "#f8f9fa" }}>
-                    <tr>
-                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Bid Title</th>
-                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Vendors Submitted</th>
-                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Deadline</th>
-                      <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pagedBids.map((row, i) => {
-                      const s = bidStatusStyle[row.status] ?? { bg: "#eee", color: "#333" };
-                      return (
-                        <tr key={i} style={{ borderBottom: "1px solid #f0f0f0" }}>
-                          <td className="px-4 py-3 fw-semibold">{row.title}</td>
-                          <td className="px-4 py-3 text-center">
-                            <span className="badge bg-light text-dark px-3 py-2" style={{ borderRadius: "20px", fontWeight: 700, fontSize: "0.85rem" }}>{row.vendors}</span>
-                          </td>
-                          <td className="px-4 py-3 text-muted">{row.deadline}</td>
-                          <td className="px-4 py-3">
-                            <span
-                              className="badge px-3 py-2"
-                              style={{ borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600, background: s.bg, color: s.color }}
-                            >
-                              {row.status}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-                <div className="d-sm-flex text-center justify-content-between align-items-center">
-                  <div className="dataTables_info">
-                    Showing {bidLastIdx - bidPageSize + 1} to{" "}
-                    {bidData.length < bidLastIdx ? bidData.length : bidLastIdx} of{" "}
-                    {bidData.length} entries
-                  </div>
-                  <div
-                    className="dataTables_paginate paging_simple_numbers justify-content-center"
-                    id="bid-overview_paginate"
-                  >
-                    <Link
-                      className="paginate_button previous disabled"
-                      to="#"
-                      onClick={() => setBidPage(p => Math.max(p - 1, 1))}
-                    >
-                      <i className="fa-solid fa-angle-left" />
-                    </Link>
-                    <span>
-                      {bidPageNums.map((n, i) => (
-                        <Link
-                          to={"#"}
-                          className={`paginate_button ${bidPage === n ? "current" : ""} `}
-                          key={i}
-                          onClick={() => setBidPage(n)}
-                        >
-                          {n}
-                        </Link>
-                      ))}
-                    </span>
-                    <Link className="paginate_button next" to="#" onClick={() => setBidPage(p => Math.min(p + 1, bidPageCount))}>
-                      <i className="fa-solid fa-angle-right" />
-                    </Link>
-                  </div>
-                </div>
+                <TanStackTable
+                  data={bidData}
+                  columns={bidOverviewColumns}
+                  enableSelection={false}
+                />
               </div>
             </div>
           </div>
@@ -642,46 +615,19 @@ const Home = () => {
 
             {/* Ranked Table */}
             <div className="table-responsive">
-              <table className="table table-hover mb-0" style={{ fontSize: "0.9rem" }}>
-                <thead style={{ background: "#f8f9fa" }}>
-                  <tr>
-                    <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Rank</th>
-                    <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Vendor</th>
-                    <th className="px-4 py-3 text-muted fw-semibold" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Bid</th>
-                    <th className="px-4 py-3 text-muted fw-semibold text-center" style={{ borderBottom: "2px solid #eee", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Score</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
+              <div id="ranked-vendors-table_wrapper" className="dataTables_wrapper no-footer">
+                <TanStackTable
+                  data={[
                     { rank: 1, vendor: "ABC Construction", bid: "Road Project", score: 91 },
                     { rank: 2, vendor: "Zenith Infrastructure", bid: "ICT Project", score: 87 },
                     { rank: 3, vendor: "Omega Tech", bid: "ICT Project", score: 84 },
                     { rank: 4, vendor: "Crestview Partners", bid: "Road Project", score: 80 },
                     { rank: 5, vendor: "Delta Force Supplies", bid: "Road Project", score: 77 },
-                  ].map((row, i) => {
-                    const medal: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
-                    const scoreColor = row.score >= 90 ? "#155724" : row.score >= 80 ? "#0c5460" : "#856404";
-                    const scoreBg = row.score >= 90 ? "#d4edda" : row.score >= 80 ? "#d1ecf1" : "#fff3cd";
-                    return (
-                      <tr key={i} style={{ borderBottom: "1px solid #f0f0f0" }}>
-                        <td className="px-4 py-3">
-                          <span style={{ fontSize: "1.1rem" }}>{medal[row.rank] ?? `#${row.rank}`}</span>
-                        </td>
-                        <td className="px-4 py-3 fw-semibold">{row.vendor}</td>
-                        <td className="px-4 py-3 text-muted">{row.bid}</td>
-                        <td className="px-4 py-3 text-center">
-                          <span
-                            className="badge px-3 py-2"
-                            style={{ borderRadius: "20px", fontSize: "0.85rem", fontWeight: 700, background: scoreBg, color: scoreColor }}
-                          >
-                            {row.score}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                  ]}
+                  columns={rankedVendorColumns}
+                  enableSelection={false}
+                />
+              </div>
             </div>
           </div>
         </div>

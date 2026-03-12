@@ -25,6 +25,12 @@ import Vendors from "./components/Vendor/Vendors";
 import VendorDetails from "./components/Vendor/VendorDetails";
 import AddNewVendor from "./components/Vendor/AddNewVendor";
 
+//Roles
+import Roles from "./components/Roles/Roles";
+import AddRole from "./components/Roles/AddRole";
+import Permissions from "./components/Roles/Permissions";
+import AddPermission from "./components/Roles/AddPermission";
+
 //bids
 import Bids from "./components/Bids/Bids";
 
@@ -59,6 +65,11 @@ const Markup = () => {
           <Route path="/vendors" element={<Vendors />} />
           <Route path="/vendor-details" element={<VendorDetails />} />
           <Route path="/add-vendor" element={<AddNewVendor />} />
+          <Route path="/edit-vendor" element={<AddNewVendor />} />
+          <Route path="/roles" element={<Roles />} />
+          <Route path="/add-role" element={<AddRole />} />
+          <Route path="/permissions" element={<Permissions />} />
+          <Route path="/add-permission" element={<AddPermission />} />
           <Route path="/bids" element={<Bids />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

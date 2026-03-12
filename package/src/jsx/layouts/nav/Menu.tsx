@@ -29,6 +29,21 @@ export const MenuList = [
     iconStyle: <i className="material-symbols-outlined">gavel</i>,
     to: "bids",
   },
+  {
+    title: "User Management",
+    classsChange: "mm-collapse",
+    iconStyle: <i className="material-symbols-outlined">manage_accounts</i>,
+    content: [
+      {
+        title: "Roles & Permissions",
+        to: "roles",
+      },
+      {
+        title: "Permissions",
+        to: "permissions",
+      },
+    ],
+  },
   /*{
     title: "Teacher",
     classsChange: "mm-collapse",

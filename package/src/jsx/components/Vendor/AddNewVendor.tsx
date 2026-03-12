@@ -1,5 +1,5 @@
-import { useState, ChangeEvent, FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 
 interface VendorFormData {
@@ -15,7 +15,6 @@ interface VendorFormData {
   contactEmail: string;
   contactPhoneNumber: string;
   contactAddress: string;
-  username: string;
 }
 
 type FormErrors = Partial<Record<keyof VendorFormData, string>>;
@@ -36,11 +35,64 @@ const AddNewVendor = () => {
     contactEmail: "",
     contactPhoneNumber: "",
     contactAddress: "",
-    username: "",
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const location = useLocation();
+  const vendorId = location.state?.vendorId;
+
+  useEffect(() => {
+    if (vendorId) {
+      setIsEditMode(true);
+      const fetchVendor = async () => {
+        setIsLoading(true);
+        try {
+          const response = await fetch(`/api/v1/vendors/${vendorId}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "x-api-key": import.meta.env.VITE_API_KEY || "",
+              Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            },
+          });
+
+          if (!response.ok) throw new Error("Failed to fetch vendor data");
+          const res = await response.json();
+          const v = res.data || res;
+
+          const contactName = v.contactPerson || v.contactFullName || "";
+          const names = contactName.split(" ");
+          const firstName = names[0] || "";
+          const lastName = names.slice(1).join(" ") || "";
+
+          setFormData({
+            companyName: v.companyName || "",
+            // NOTE: Backend field names are swapped — compensate here too
+            rcNumber: v.phoneNumber || "",
+            tinNumber: v.rcNumber || "",
+            email: v.email || "",
+            phoneNumber: v.tinNumber || "",
+            companyAddress: v.companyAddress || "",
+            websiteAddress: v.websiteAddress || "",
+            firstName,
+            lastName,
+            contactEmail: v.contactEmail || "",
+            contactPhoneNumber: v.contactPhone || v.contactPhoneNumber || "",
+            contactAddress: v.contactAddress || "",
+          });
+        } catch (error) {
+          console.error("Error fetching vendor:", error);
+          toast.error("Failed to load vendor data for editing.");
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchVendor();
+    }
+  }, [vendorId]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -48,26 +100,38 @@ const AddNewVendor = () => {
 
     // Enforce "RC-" prefix
     if (name === "rcNumber") {
-      const formatted = value.toUpperCase().replace(/[^a-zA-Z0-9-]/g, "");
-      if (!formatted.startsWith("RC-")) {
-        // If user deleted part of the prefix, restore it
-        newValue = "RC-" + formatted.replace(/^R?C?-?/, "");
+      if (value === "") {
+        newValue = "";
       } else {
-        newValue = formatted;
+        const stripped = value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+        const digits = stripped.replace(/^R?C?/, "");
+        newValue = "RC-" + digits.replace(/^-?/, "");
+        // Keep raw if it already starts correctly
+        if (value.toUpperCase().startsWith("RC-")) {
+          newValue = "RC-" + value.slice(3).replace(/[^0-9]/g, "");
+        }
       }
-      // If the user completely clears the input, let it be empty so the placeholder shows
-      if (value === "") newValue = "";
     }
 
     // Enforce "TIN-" prefix
     if (name === "tinNumber") {
-      const formatted = value.toUpperCase().replace(/[^a-zA-Z0-9-]/g, "");
-      if (!formatted.startsWith("TIN-")) {
-        newValue = "TIN-" + formatted.replace(/^T?I?N?-?/, "");
+      if (value === "") {
+        newValue = "";
+      } else if (value.toUpperCase().startsWith("TIN-")) {
+        newValue = "TIN-" + value.slice(4).replace(/[^0-9]/g, "");
       } else {
-        newValue = formatted;
+        newValue = "TIN-" + value.replace(/[^0-9]/g, "");
       }
-      if (value === "") newValue = "";
+    }
+
+    // Auto-format Nigerian phone numbers to international format
+    if (name === "phoneNumber" || name === "contactPhoneNumber") {
+      const digits = newValue.replace(/\D/g, "");
+      if (digits.startsWith("0") && digits.length === 11) {
+        newValue = "+234" + digits.slice(1);
+      } else if (digits.startsWith("234") && digits.length === 13) {
+        newValue = "+" + digits;
+      }
     }
 
     setFormData((prev) => ({ ...prev, [name]: newValue }));
@@ -79,23 +143,22 @@ const AddNewVendor = () => {
   const validate = (): FormErrors => {
     const e: FormErrors = {};
 
-    // ── Company ──
     if (!formData.companyName.trim()) e.companyName = "Legal Name is required.";
 
-    // RC: must match RC-123456 (RC- followed by 6–7 digits)
-    const rcPattern = /^RC-\d{6,7}$/i;
+    // RC: RC- followed by digits (6–9 digits to be flexible)
+    const rcPattern = /^RC-\d{6,9}$/i;
     if (!formData.rcNumber.trim()) {
       e.rcNumber = "RC Number is required.";
     } else if (!rcPattern.test(formData.rcNumber.trim())) {
-      e.rcNumber = "Invalid format (e.g., RC-123456).";
+      e.rcNumber = "Invalid format. Must be RC- followed by 6–9 digits (e.g. RC-1457809).";
     }
 
-    // TIN: TIN- followed by 9 or 12 digits
-    const tinPattern = /^TIN-(\d{9}|\d{12})$/i;
+    // TIN: TIN- followed by 9–13 digits (flexible to match real-world values)
+    const tinPattern = /^TIN-\d{9,13}$/i;
     if (!formData.tinNumber.trim()) {
       e.tinNumber = "TIN is required.";
     } else if (!tinPattern.test(formData.tinNumber.trim())) {
-      e.tinNumber = "Must be TIN- followed by 9 or 12 digits (e.g. TIN-908776521).";
+      e.tinNumber = "Must be TIN- followed by 9–13 digits (e.g. TIN-908776521).";
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -112,9 +175,14 @@ const AddNewVendor = () => {
       e.phoneNumber = "Enter a valid phone number (e.g. +2348012345678).";
     }
 
-    if (!formData.companyAddress.trim()) e.companyAddress = "Company Address is required.";
+    // Warn if not in international format
+    if (formData.phoneNumber && !formData.phoneNumber.startsWith("+")) {
+      e.phoneNumber = "Phone must be in international format (e.g. +2348012345678).";
+    }
 
-    // ── Contact Person ──
+    if (!formData.companyAddress.trim()) e.companyAddress = "Company Address is required.";
+    if (!formData.websiteAddress.trim()) e.websiteAddress = "Website Address is required.";
+
     if (!formData.firstName.trim()) e.firstName = "First Name is required.";
     if (!formData.lastName.trim()) e.lastName = "Last Name is required.";
 
@@ -128,12 +196,11 @@ const AddNewVendor = () => {
       e.contactPhoneNumber = "Contact Phone is required.";
     } else if (!phoneRegex.test(formData.contactPhoneNumber)) {
       e.contactPhoneNumber = "Enter a valid phone number (e.g. +2348098765432).";
+    } else if (!formData.contactPhoneNumber.startsWith("+")) {
+      e.contactPhoneNumber = "Phone must be in international format (e.g. +2348098765432).";
     }
 
     if (!formData.contactAddress.trim()) e.contactAddress = "Contact Address is required.";
-
-    // ── Account ──
-    if (!formData.username.trim()) e.username = "Username is required.";
 
     return e;
   };
@@ -150,7 +217,7 @@ const AddNewVendor = () => {
 
     setIsLoading(true);
     try {
-      // Payload matches the exact shape the backend expects (no password field)
+      // Send fields exactly as the API expects them (straight mapping — no swap needed on POST)
       const payload = {
         companyName: formData.companyName,
         rcNumber: formData.rcNumber,
@@ -159,40 +226,58 @@ const AddNewVendor = () => {
         phoneNumber: formData.phoneNumber,
         companyAddress: formData.companyAddress,
         websiteAddress: formData.websiteAddress,
-        contactFullName: `${formData.firstName} ${formData.lastName}`,
+        contactFullName: `${formData.firstName} ${formData.lastName}`.trim(),
         contactEmail: formData.contactEmail,
         contactPhoneNumber: formData.contactPhoneNumber,
         contactAddress: formData.contactAddress,
-        username: formData.username,
+        username: formData.email,
       };
 
-      const response = await fetch('/api/v1/vendors', {
-        method: 'POST',
+      const token = sessionStorage.getItem("accessToken");
+      const url = isEditMode ? `/api/v1/vendors/${vendorId}` : "/api/v1/vendors";
+      const method = isEditMode ? "PUT" : "POST";
+
+      // Debug: log exactly what is being sent to diagnose 500 errors
+      console.log("=== VENDOR SUBMIT ===");
+      console.log("URL:", url, "| Method:", method);
+      console.log("Payload:", JSON.stringify(payload, null, 2));
+      console.log("Auth token present:", !!token);
+      console.log("API key present:", !!import.meta.env.VITE_API_KEY);
+
+      const response = await fetch(url, {
+        method,
         headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': import.meta.env.VITE_API_KEY || '',
-          'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`,
+          "Content-Type": "application/json",
+          "x-api-key": import.meta.env.VITE_API_KEY || "",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
 
+      console.log("Response status:", response.status);
+
       if (!response.ok) {
-        const raw = await response.text(); // read body once
-        let message = 'Failed to add vendor';
+        const raw = await response.text();
+        console.log("=== SERVER ERROR BODY ===", raw);
+        let message = isEditMode ? "Failed to update vendor" : "Failed to add vendor";
         try {
           const parsed = JSON.parse(raw);
-          message = parsed?.message || parsed?.error || message;
+          message =
+            parsed?.message ||
+            parsed?.error ||
+            (parsed?.errors ? JSON.stringify(parsed.errors) : null) ||
+            message;
         } catch {
-          message = raw || message; // fall back to raw text if not JSON
+          message = raw || message;
         }
         throw new Error(message);
       }
 
-      toast.success("Vendor added successfully.");
-      navigate('/vendor');
+      toast.success(isEditMode ? "Vendor updated successfully." : "Vendor added successfully.");
+      navigate("/vendors");
     } catch (error: any) {
-      console.error("Error adding vendor:", error);
-      toast.error(error.message || "Failed to add vendor");
+      console.error("Error saving vendor:", error);
+      toast.error(error.message || "Failed to save vendor");
     } finally {
       setIsLoading(false);
     }
@@ -207,7 +292,7 @@ const AddNewVendor = () => {
         <div className="col-xl-12">
           <div className="card">
             <div className="card-header">
-              <h5 className="mb-0">Vendor Details</h5>
+              <h5 className="mb-0">{isEditMode ? "Edit Vendor Details" : "Vendor Details"}</h5>
             </div>
             <div className="card-body">
               {/* ── Company Information ── */}
@@ -230,7 +315,7 @@ const AddNewVendor = () => {
                     </label>
                     <input type="text" className={fc("rcNumber")} id="rcNumber" name="rcNumber"
                       value={formData.rcNumber} onChange={handleInputChange}
-                      placeholder="RC-1234567" disabled={isLoading} maxLength={10} />
+                      placeholder="RC-1457809" disabled={isLoading} maxLength={12} />
                     {errors.rcNumber && <div className="invalid-feedback">{errors.rcNumber}</div>}
                   </div>
 
@@ -240,7 +325,7 @@ const AddNewVendor = () => {
                     </label>
                     <input type="text" className={fc("tinNumber")} id="tinNumber" name="tinNumber"
                       value={formData.tinNumber} onChange={handleInputChange}
-                      placeholder="TIN-0123456789" disabled={isLoading} maxLength={16} />
+                      placeholder="TIN-908776521" disabled={isLoading} maxLength={17} />
                     {errors.tinNumber && <div className="invalid-feedback">{errors.tinNumber}</div>}
                   </div>
 
@@ -262,7 +347,7 @@ const AddNewVendor = () => {
                     </label>
                     <input type="text" className={fc("phoneNumber")} id="phoneNumber" name="phoneNumber"
                       value={formData.phoneNumber} onChange={handleInputChange}
-                      placeholder="080123456789" disabled={isLoading} />
+                      placeholder="+2348012345678" disabled={isLoading} />
                     {errors.phoneNumber && <div className="invalid-feedback">{errors.phoneNumber}</div>}
                   </div>
 
@@ -278,11 +363,12 @@ const AddNewVendor = () => {
 
                   <div className="mb-3">
                     <label htmlFor="websiteAddress" className="form-label text-primary">
-                      Website Address
+                      Website Address<span className="required">*</span>
                     </label>
-                    <input type="text" className="form-control" id="websiteAddress" name="websiteAddress"
+                    <input type="text" className={fc("websiteAddress")} id="websiteAddress" name="websiteAddress"
                       value={formData.websiteAddress} onChange={handleInputChange}
-                      placeholder="www.xyzcompany.com" disabled={isLoading} />
+                      placeholder="https://www.xyzcompany.com" disabled={isLoading} />
+                    {errors.websiteAddress && <div className="invalid-feedback">{errors.websiteAddress}</div>}
                   </div>
                 </div>
               </div>
@@ -339,24 +425,8 @@ const AddNewVendor = () => {
                     </label>
                     <input type="text" className={fc("contactPhoneNumber")} id="contactPhoneNumber" name="contactPhoneNumber"
                       value={formData.contactPhoneNumber} onChange={handleInputChange}
-                      placeholder="080123456789" disabled={isLoading} />
+                      placeholder="+2348098765432" disabled={isLoading} />
                     {errors.contactPhoneNumber && <div className="invalid-feedback">{errors.contactPhoneNumber}</div>}
-                  </div>
-                </div>
-              </div>
-
-              {/* ── Account ── */}
-              <h6 className="text-primary fw-bold mb-3 border-bottom pb-2 mt-2">Account</h6>
-              <div className="row">
-                <div className="col-xl-6 col-sm-6">
-                  <div className="mb-3">
-                    <label htmlFor="username" className="form-label text-primary">
-                      Username<span className="required">*</span>
-                    </label>
-                    <input type="text" className={fc("username")} id="username" name="username"
-                      value={formData.username} onChange={handleInputChange}
-                      placeholder="vendorusername" disabled={isLoading} />
-                    {errors.username && <div className="invalid-feedback">{errors.username}</div>}
                   </div>
                 </div>
               </div>
@@ -364,13 +434,14 @@ const AddNewVendor = () => {
 
             <div className="card-footer">
               <button type="button" className="btn btn-outline-primary me-3" disabled={isLoading}
-                onClick={() => navigate('/vendor')}>
+                onClick={() => navigate("/vendors")}>
                 Cancel
               </button>
               <button className="btn btn-primary" type="submit" disabled={isLoading}>
                 {isLoading ? (
-                  <><span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...</>
-                ) : "Save Vendor"}
+                  <><span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    {isEditMode ? "Updating..." : "Saving..."}</>
+                ) : (isEditMode ? "Update Vendor" : "Save Vendor")}
               </button>
             </div>
           </div>

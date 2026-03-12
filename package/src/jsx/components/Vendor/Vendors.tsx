@@ -54,14 +54,14 @@ const Vendors = () => {
       const fetchedVendors: VendorRow[] = rawVendors.map((v: any) => ({
         id: v.id || v._id || "",
         companyName: v.companyName || "",
-        // Based on user feedback: API swap detected
-        // v.rcNumber contains the TIN
-        // v.tinNumber contains the Phone
-        // v.phoneNumber likely contains the RC Number
-        rcNumber: v.phoneNumber || v.phone || "",
-        tinNumber: v.rcNumber || v.rc || "",
+        // NOTE: Backend field names are incorrectly swapped at the API level:
+        // - v.phoneNumber holds the RC Number  (e.g. "RC-1457809")
+        // - v.rcNumber   holds the TIN Number  (e.g. "TIN-908776521")
+        // - v.tinNumber  holds the Phone Number (e.g. "+2348012345678")
+        rcNumber: v.phoneNumber || "",
+        tinNumber: v.rcNumber || "",
         email: v.email || "",
-        phoneNumber: v.tinNumber || v.tin || v.tin_number || "",
+        phoneNumber: v.tinNumber || "",
         status: v.status || "ACTIVE",
       }));
 
@@ -121,15 +121,12 @@ const Vendors = () => {
         accessorKey: "companyName",
         cell: ({ row }: { row: Row<VendorRow> }) => (
           <div className="trans-list">
-            <h4 className="mb-0">{row.original.companyName}</h4>
+            <h4 className="mb-0">
+              <Link to="/vendor-details" state={{ vendorId: row.original.id }} className="text-primary">
+                {row.original.companyName}
+              </Link>
+            </h4>
           </div>
-        ),
-      },
-      {
-        header: "RC Number",
-        accessorKey: "rcNumber",
-        cell: ({ row }: { row: Row<VendorRow> }) => (
-          <span className="font-w500">{row.original.rcNumber}</span>
         ),
       },
       {
@@ -137,6 +134,13 @@ const Vendors = () => {
         accessorKey: "tinNumber",
         cell: ({ row }: { row: Row<VendorRow> }) => (
           <span className="text-primary font-w600">{row.original.tinNumber}</span>
+        ),
+      },
+      {
+        header: "RC Number",
+        accessorKey: "rcNumber",
+        cell: ({ row }: { row: Row<VendorRow> }) => (
+          <span className="font-w500">{row.original.rcNumber}</span>
         ),
       },
       {

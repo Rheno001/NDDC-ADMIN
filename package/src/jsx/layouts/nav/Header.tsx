@@ -568,7 +568,9 @@ const Header = ({ onNote }: propType) => {
                             <img src={profile} className="ms-0" alt="" />
                           </li>
                           <li className="ms-2">
-                            <h4 className="mb-0">Nella Vita</h4>
+                            <h4 className="mb-0 text-truncate" style={{ maxWidth: '180px' }}>
+                              {sessionStorage.getItem("username") || "Admin"}
+                            </h4>
                             <span>Admin</span>
                           </li>
                         </ul>

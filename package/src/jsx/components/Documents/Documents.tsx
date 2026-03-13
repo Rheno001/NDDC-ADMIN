@@ -182,7 +182,7 @@ const Documents = () => {
         <div className="card">
             <div className="card-header d-sm-flex d-block border-0 pb-0">
                 <div className="me-auto mb-sm-0 mb-3">
-                    <h4 className="card-title mb-1">Document Types List</h4>
+                    <h4 className="card-title mb-1">Document Types</h4>
                 </div>
                 <Link to="#" className="btn btn-primary btn-rounded" onClick={(e) => { e.preventDefault(); handleCreate(); }}>
                     + Create Document Type

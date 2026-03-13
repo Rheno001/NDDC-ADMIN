@@ -6,7 +6,6 @@ interface PermissionFormData {
     name: string;
     label: string;
     description: string;
-    group: string;
 }
 
 const AddPermission = () => {
@@ -14,7 +13,6 @@ const AddPermission = () => {
         name: "",
         label: "",
         description: "",
-        group: "",
     });
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
@@ -39,11 +37,10 @@ const AddPermission = () => {
 
         setIsLoading(true);
         try {
-            // API expects group to be an array or string? Based on provided example it's an array.
-            // We'll split the comma-separated group string into an array.
             const payload = {
-                ...formData,
-                group: formData.group.split(",").map(g => g.trim()).filter(g => g !== ""),
+                name: formData.name.trim(),
+                label: formData.label.trim(),
+                description: formData.description.trim(),
             };
 
             const response = await fetch("/api/v1/permissions", {
@@ -58,6 +55,8 @@ const AddPermission = () => {
 
             if (!response.ok) {
                 const raw = await response.text();
+                console.error("Submission failed status:", response.status);
+                console.error("Submission failed body:", raw);
                 let message = "Failed to create permission";
                 try {
                     const parsed = JSON.parse(raw);
@@ -135,19 +134,6 @@ const AddPermission = () => {
                                         placeholder="Describe what this permission allows..."
                                         disabled={isLoading}
                                     ></textarea>
-                                </div>
-                                <div className="col-xl-12 mb-3">
-                                    <label className="form-label font-w600 text-black">Group (Category)</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        name="group"
-                                        value={formData.group}
-                                        onChange={handleInputChange}
-                                        placeholder="e.g. Vendor Management, Account"
-                                        disabled={isLoading}
-                                    />
-                                    <small className="text-muted">Use commas to separate multiple groups.</small>
                                 </div>
                             </div>
                         </div>

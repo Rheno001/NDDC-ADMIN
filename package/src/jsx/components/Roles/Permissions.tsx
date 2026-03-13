@@ -10,6 +10,7 @@ interface PermissionRow {
     label: string;
     description: string;
     group: string[];
+    groupType: string;
 }
 
 const Permissions = () => {
@@ -25,7 +26,7 @@ const Permissions = () => {
         setIsLoading(true);
         try {
             const activePage = page !== undefined ? page : pageIndex;
-            const response = await fetch(`/api/v1/permissions?page=${activePage}&size=${PAGE_SIZE}&groupType=ALL`, {
+            const response = await fetch(`/api/v1/permissions?page=${activePage}&size=1000&groupType=ALL&search=${globalFilter}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -71,6 +72,7 @@ const Permissions = () => {
                 label: p.label || p.name || "",
                 description: p.description || "No description",
                 group: Array.isArray(p.group) ? p.group : [],
+                groupType: p.groupType || "N/A",
             }));
 
             setPermissions(fetchedPermissions);
@@ -117,19 +119,6 @@ const Permissions = () => {
                 accessorKey: "description",
                 cell: ({ row }: { row: Row<PermissionRow> }) => (
                     <span className="font-w500">{row.original.description}</span>
-                ),
-            },
-            {
-                header: "Group",
-                accessorKey: "group",
-                cell: ({ row }: { row: Row<PermissionRow> }) => (
-                    <div className="d-flex flex-wrap gap-1">
-                        {row.original.group.map((g, idx) => (
-                            <span key={idx} className="badge badge-outline-primary badge-xs">
-                                {g}
-                            </span>
-                        ))}
-                    </div>
                 ),
             },
         ],

@@ -100,7 +100,9 @@ const Header = ({ onNote }: propType) => {
                   ? "Dashboard"
                   : finalName.join(" ") === "dashboard dark"
                     ? "Dashboard"
-                    : finalName.join(" ")}
+                    : finalName.join(" ") === "documents"
+                      ? "Document Types"
+                      : finalName.join(" ")}
               </div>
             </div>
             <ul className="navbar-nav header-right">

@@ -209,7 +209,7 @@ const ManageFields = () => {
         <>
             <div className="page-titles">
                 <ol className="breadcrumb">
-                    <li className="breadcrumb-item"><Link to="/documents">Documents</Link></li>
+                    <li className="breadcrumb-item"><Link to="/documents">Document Types</Link></li>
                     <li className="breadcrumb-item active"><Link to="#">Manage Fields</Link></li>
                 </ol>
             </div>

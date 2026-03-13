@@ -116,7 +116,9 @@ const Header2: React.FC<Header2Props> = ({ onNote }) => {
                   ? "Dashboard"
                   : finalName.join(" ") === "dashboard dark"
                     ? "Dashboard"
-                    : finalName.join(" ")}
+                    : finalName.join(" ") === "documents"
+                      ? "Document Types"
+                      : finalName.join(" ")}
               </div>
             </div>
             <ul className="navbar-nav header-right">

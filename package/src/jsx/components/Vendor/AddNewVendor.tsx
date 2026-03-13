@@ -62,26 +62,21 @@ const AddNewVendor = () => {
           if (!response.ok) throw new Error("Failed to fetch vendor data");
           const res = await response.json();
           const v = res.data || res;
-
-          const contactName = v.contactPerson || v.contactFullName || "";
-          const names = contactName.split(" ");
-          const firstName = names[0] || "";
-          const lastName = names.slice(1).join(" ") || "";
+          const vc = v.vendorContact || {};
 
           setFormData({
             companyName: v.companyName || "",
-            // NOTE: Backend field names are swapped — compensate here too
-            rcNumber: v.phoneNumber || "",
-            tinNumber: v.rcNumber || "",
+            rcNumber: v.rcNumber || "",
+            tinNumber: v.tinNumber || "",
             email: v.email || "",
-            phoneNumber: v.tinNumber || "",
+            phoneNumber: v.phoneNumber || "",
             companyAddress: v.companyAddress || "",
             websiteAddress: v.websiteAddress || "",
-            firstName,
-            lastName,
-            contactEmail: v.contactEmail || "",
-            contactPhoneNumber: v.contactPhone || v.contactPhoneNumber || "",
-            contactAddress: v.contactAddress || "",
+            firstName: vc.firstName || "",
+            lastName: vc.lastName || "",
+            contactEmail: vc.email || "",
+            contactPhoneNumber: vc.phoneNumber || "",
+            contactAddress: vc.address || "",
           });
         } catch (error) {
           console.error("Error fetching vendor:", error);
@@ -217,7 +212,6 @@ const AddNewVendor = () => {
 
     setIsLoading(true);
     try {
-      // Send fields exactly as the API expects them (straight mapping — no swap needed on POST)
       const payload = {
         companyName: formData.companyName,
         rcNumber: formData.rcNumber,
@@ -226,10 +220,13 @@ const AddNewVendor = () => {
         phoneNumber: formData.phoneNumber,
         companyAddress: formData.companyAddress,
         websiteAddress: formData.websiteAddress,
-        contactFullName: `${formData.firstName} ${formData.lastName}`.trim(),
-        contactEmail: formData.contactEmail,
-        contactPhoneNumber: formData.contactPhoneNumber,
-        contactAddress: formData.contactAddress,
+        vendorContact: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.contactEmail,
+          phoneNumber: formData.contactPhoneNumber,
+          address: formData.contactAddress,
+        },
         username: formData.email,
       };
 

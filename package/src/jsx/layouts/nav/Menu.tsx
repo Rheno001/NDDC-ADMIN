@@ -15,10 +15,6 @@ export const MenuList = [
         to: "vendors",
       },
       {
-        title: "Vendor Detail",
-        to: "vendor-details",
-      },
-      {
         title: "Add New Vendor",
         to: "add-vendor",
       },
@@ -28,6 +24,17 @@ export const MenuList = [
     title: "Bids",
     iconStyle: <i className="material-symbols-outlined">gavel</i>,
     to: "bids",
+  },
+  {
+    title: "Document Management",
+    classsChange: "mm-collapse",
+    iconStyle: <i className="material-symbols-outlined">description</i>,
+    content: [
+      {
+        title: "Document Types",
+        to: "documents",
+      },
+    ],
   },
   {
     title: "User Management",

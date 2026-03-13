@@ -54,14 +54,10 @@ const Vendors = () => {
       const fetchedVendors: VendorRow[] = rawVendors.map((v: any) => ({
         id: v.id || v._id || "",
         companyName: v.companyName || "",
-        // NOTE: Backend field names are incorrectly swapped at the API level:
-        // - v.phoneNumber holds the RC Number  (e.g. "RC-1457809")
-        // - v.rcNumber   holds the TIN Number  (e.g. "TIN-908776521")
-        // - v.tinNumber  holds the Phone Number (e.g. "+2348012345678")
-        rcNumber: v.phoneNumber || "",
-        tinNumber: v.rcNumber || "",
+        rcNumber: v.rcNumber || "",
+        tinNumber: v.tinNumber || "",
         email: v.email || "",
-        phoneNumber: v.tinNumber || "",
+        phoneNumber: v.phoneNumber || "",
         status: v.status || "ACTIVE",
       }));
 
@@ -193,6 +189,7 @@ const Vendors = () => {
                       {selectedVendorId && (
                         <Link
                           to="/vendor-details"
+                          state={{ vendorId: selectedVendorId }}
                           className="btn btn-info btn-sm me-2"
                         >
                           View Details

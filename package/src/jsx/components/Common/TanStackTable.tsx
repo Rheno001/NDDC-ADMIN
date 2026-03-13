@@ -176,7 +176,7 @@ export function TanStackTable<T extends { id: string }>({
             </table>
 
             {/* Pagination */}
-            <div className="d-sm-flex text-center justify-content-between align-items-center mt-3">
+            <div className="d-sm-flex text-center justify-content-between align-items-center mt-3 custom-pagination">
                 <div className="dataTables_info">
                     Showing {displayFrom} to {displayTo} of {displayTotal} entries
                 </div>

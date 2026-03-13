@@ -34,6 +34,10 @@ import AddPermission from "./components/Roles/AddPermission";
 //bids
 import Bids from "./components/Bids/Bids";
 
+//Documents
+import Documents from "./components/Documents/Documents";
+import ManageFields from "./components/Documents/ManageFields";
+
 
 
 
@@ -71,6 +75,8 @@ const Markup = () => {
           <Route path="/permissions" element={<Permissions />} />
           <Route path="/add-permission" element={<AddPermission />} />
           <Route path="/bids" element={<Bids />} />
+          <Route path="/documents" element={<Documents />} />
+          <Route path="/documents/manage-fields/:id" element={<ManageFields />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

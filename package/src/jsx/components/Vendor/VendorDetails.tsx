@@ -71,23 +71,20 @@ const VendorDetails = () => {
         const data = await response.json();
         const v = data.data || data;
 
+        const vc = v.vendorContact || {};
         setVendor({
           id: v.id || v._id || "",
           companyName: v.companyName || "N/A",
-          // NOTE: Backend field names are swapped — compensate here
-          // - v.phoneNumber holds the RC Number
-          // - v.rcNumber   holds the TIN Number
-          // - v.tinNumber  holds the Phone Number
-          rcNumber: v.phoneNumber || "N/A",
-          tinNumber: v.rcNumber || "N/A",
+          rcNumber: v.rcNumber || "N/A",
+          tinNumber: v.tinNumber || "N/A",
           email: v.email || "N/A",
-          phoneNumber: v.tinNumber || "N/A",
+          phoneNumber: v.phoneNumber || "N/A",
           companyAddress: v.companyAddress || "N/A",
           websiteAddress: v.websiteAddress || "N/A",
-          contactPerson: v.contactPerson || "N/A",
-          contactEmail: v.contactEmail || "N/A",
-          contactPhone: v.contactPhone || v.contactPhoneNumber || "N/A",
-          contactAddress: v.contactAddress || "N/A",
+          contactPerson: vc.firstName && vc.lastName ? `${vc.firstName} ${vc.lastName}` : (v.contactPerson || v.contactFullName || "N/A"),
+          contactEmail: vc.email || v.contactEmail || "N/A",
+          contactPhone: vc.phoneNumber || v.contactPhone || v.contactPhoneNumber || "N/A",
+          contactAddress: vc.address || v.contactAddress || "N/A",
           status: v.status || "UNKNOWN",
         });
       } catch (error) {

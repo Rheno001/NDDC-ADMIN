@@ -26,7 +26,7 @@ export const MenuList = [
     to: "bids",
   },
   {
-    title: "Document Management",
+    title: "Doc Management",
     classsChange: "mm-collapse",
     iconStyle: <i className="material-symbols-outlined">description</i>,
     content: [

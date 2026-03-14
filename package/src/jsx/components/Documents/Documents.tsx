@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { toast } from 'react-toastify';
 import { TanStackTable } from '../Common/TanStackTable';
 import DocumentTypeModal, { DocumentTypeModalHandle } from './DocumentTypeModal';
+import { apiFetch } from '../../../utils/api';
 
 interface DocumentType {
     id: string;
@@ -23,13 +24,8 @@ const Documents = () => {
     const fetchDocumentTypes = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await fetch('/api/v1/document-types', {
+            const response = await apiFetch('/api/v1/document-types', {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': import.meta.env.VITE_API_KEY || '',
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
-                }
             });
 
             if (!response.ok) {
@@ -70,13 +66,8 @@ const Documents = () => {
         if (!window.confirm('Are you sure you want to delete this document type?')) return;
 
         try {
-            const response = await fetch(`/api/v1/document-types/${id}`, {
+            const response = await apiFetch(`/api/v1/document-types/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': import.meta.env.VITE_API_KEY || '',
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
-                }
             });
 
             if (!response.ok) {
@@ -97,13 +88,8 @@ const Documents = () => {
             const url = isEdit ? `/api/v1/document-types/${doc.id}` : '/api/v1/document-types';
             const method = isEdit ? 'PUT' : 'POST';
 
-            const response = await fetch(url, {
+            const response = await apiFetch(url, {
                 method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': import.meta.env.VITE_API_KEY || '',
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
-                },
                 body: JSON.stringify(doc)
             });
 

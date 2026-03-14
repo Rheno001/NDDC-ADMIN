@@ -2,17 +2,14 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { ThemeContext } from "../../../context/ThemeContext";
-import nddclogo from "../../../assets/images/nddclogo.webp";
+import nddclogo from "../../../assets/images/NDDC LOGO - PNG 1.png";
 
 const NavHader = () => {
   const { openMenuToggle, setOpenMenuToggle } = useContext(ThemeContext);
   return (
     <div className="nav-header">
-      <Link to="/dashboard" className="brand-logo d-flex align-items-center gap-2 text-decoration-none">
-        <img src={nddclogo} alt="NDDC Logo" width="50" style={{ maxHeight: '50px', objectFit: 'contain' }} className="logo-abbr" />
-        <div className="brand-title">
-          <h2 className="mb-0 fs-18 font-w800 text-white">NDDC-ADMIN</h2>
-        </div>
+      <Link to="/dashboard" className="brand-logo d-flex align-items-center justify-content-center text-decoration-none">
+        <img src={nddclogo} alt="NDDC Logo" className="w-100 p-2" style={{ maxWidth: '220px', maxHeight: '75px', objectFit: 'contain' }} />
       </Link>
 
       <div

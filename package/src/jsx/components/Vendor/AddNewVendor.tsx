@@ -1,6 +1,7 @@
 import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
+import { apiFetch } from "../../../utils/api";
 
 interface VendorFormData {
   companyName: string;
@@ -40,6 +41,7 @@ const AddNewVendor = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [contactId, setContactId] = useState<string | null>(null);
 
   const location = useLocation();
   const vendorId = location.state?.vendorId;
@@ -50,13 +52,8 @@ const AddNewVendor = () => {
       const fetchVendor = async () => {
         setIsLoading(true);
         try {
-          const response = await fetch(`/api/v1/vendors/${vendorId}`, {
+          const response = await apiFetch(`/api/v1/vendors/${vendorId}`, {
             method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "x-api-key": import.meta.env.VITE_API_KEY || "",
-              Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-            },
           });
 
           if (!response.ok) throw new Error("Failed to fetch vendor data");
@@ -78,6 +75,7 @@ const AddNewVendor = () => {
             contactPhoneNumber: vc.phoneNumber || "",
             contactAddress: vc.address || "",
           });
+          setContactId(vc.id || null);
         } catch (error) {
           console.error("Error fetching vendor:", error);
           toast.error("Failed to load vendor data for editing.");
@@ -241,15 +239,27 @@ const AddNewVendor = () => {
       console.log("Auth token present:", !!token);
       console.log("API key present:", !!import.meta.env.VITE_API_KEY);
 
-      const response = await fetch(url, {
+      const response = await apiFetch(url, {
         method,
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": import.meta.env.VITE_API_KEY || "",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify(payload),
       });
+
+      if (isEditMode && contactId) {
+        const contactPayload = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.contactEmail,
+          phoneNumber: formData.contactPhoneNumber,
+          address: formData.contactAddress,
+        };
+        const contactResponse = await apiFetch(`/api/v1/vendor/contacts/${contactId}`, {
+          method: "PUT",
+          body: JSON.stringify(contactPayload),
+        });
+        if (!contactResponse.ok) {
+          console.error("Failed to update vendor contact separately");
+        }
+      }
 
       console.log("Response status:", response.status);
 

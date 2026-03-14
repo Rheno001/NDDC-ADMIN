@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../../../context/ThemeContext";
+import { apiFetch } from "../../../utils/api";
 
 function LogoutPage() {
   const { setAuth } = useContext(ThemeContext);
@@ -10,12 +11,8 @@ function LogoutPage() {
 
     if (refreshToken) {
       try {
-        await fetch("/api/v1/auth/logout", {
+        await apiFetch("/api/v1/auth/logout", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": import.meta.env.VITE_API_KEY,
-          },
           body: JSON.stringify({ refreshToken }),
         });
       } catch (error) {

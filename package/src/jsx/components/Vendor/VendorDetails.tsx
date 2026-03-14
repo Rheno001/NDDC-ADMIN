@@ -4,6 +4,7 @@ import { SVGICON } from "../Dashboard/Content";
 import { Dropdown } from "react-bootstrap";
 import { toast } from "react-toastify";
 import PaymentHistoryTable from "./PaymentHistoryTable";
+import { apiFetch } from "../../../utils/api";
 
 interface VendorDetailsData {
   id: string;
@@ -14,7 +15,8 @@ interface VendorDetailsData {
   phoneNumber: string;
   companyAddress: string;
   websiteAddress: string;
-  contactPerson: string;
+  contactFirstName: string;
+  contactLastName: string;
   contactEmail: string;
   contactPhone: string;
   contactAddress: string;
@@ -55,13 +57,8 @@ const VendorDetails = () => {
 
     const fetchVendorDetails = async () => {
       try {
-        const response = await fetch(`/api/v1/vendors/${vendorId}`, {
+        const response = await apiFetch(`/api/v1/vendors/${vendorId}`, {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": import.meta.env.VITE_API_KEY || "",
-            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-          },
         });
 
         if (!response.ok) {
@@ -71,7 +68,22 @@ const VendorDetails = () => {
         const data = await response.json();
         const v = data.data || data;
 
-        const vc = v.vendorContact || {};
+        // Try to fetch contact details separately if needed or just use what's there
+        let vc = v.vendorContact || {};
+
+        try {
+          const contactResponse = await apiFetch(`/api/v1/vendor/contacts/${vendorId}`, {
+            method: "GET",
+          });
+          if (contactResponse.ok) {
+            const contactData = await contactResponse.json();
+            vc = contactData.data || contactData;
+          }
+        } catch (contactError) {
+          console.error("Error fetching vendor contact separately:", contactError);
+          // Fallback to what's in the vendor object
+        }
+
         setVendor({
           id: v.id || v._id || "",
           companyName: v.companyName || "N/A",
@@ -81,7 +93,8 @@ const VendorDetails = () => {
           phoneNumber: v.phoneNumber || "N/A",
           companyAddress: v.companyAddress || "N/A",
           websiteAddress: v.websiteAddress || "N/A",
-          contactPerson: vc.firstName && vc.lastName ? `${vc.firstName} ${vc.lastName}` : (v.contactPerson || v.contactFullName || "N/A"),
+          contactFirstName: vc.firstName || v.contactFirstName || "N/A",
+          contactLastName: vc.lastName || v.contactLastName || "N/A",
           contactEmail: vc.email || v.contactEmail || "N/A",
           contactPhone: vc.phoneNumber || v.contactPhone || v.contactPhoneNumber || "N/A",
           contactAddress: vc.address || v.contactAddress || "N/A",
@@ -117,8 +130,11 @@ const VendorDetails = () => {
     { title: "Phone", subtitle: vendor.phoneNumber, icon: "fa-solid fa-phone" },
     { title: "Address", subtitle: vendor.companyAddress, icon: "fa-solid fa-location-dot" },
     { title: "Website", subtitle: vendor.websiteAddress, icon: "fa-solid fa-globe" },
-    { title: "Contact Person", subtitle: vendor.contactPerson, icon: "fa-solid fa-user-tie" },
+    { title: "Contact First Name", subtitle: vendor.contactFirstName, icon: "fa-solid fa-user-tie" },
+    { title: "Contact Last Name", subtitle: vendor.contactLastName, icon: "fa-solid fa-user-tie" },
     { title: "Contact Phone", subtitle: vendor.contactPhone, icon: "fa-solid fa-mobile-screen" },
+    { title: "Contact Email", subtitle: vendor.contactEmail, icon: "fa-solid fa-envelope-open-text" },
+    { title: "Contact Address", subtitle: vendor.contactAddress, icon: "fa-solid fa-map-location-dot" },
   ];
 
   const getInitials = (name: string) => {

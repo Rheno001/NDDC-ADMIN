@@ -1,6 +1,7 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { apiFetch } from "../../../utils/api";
 
 interface PermissionFormData {
     name: string;
@@ -43,13 +44,8 @@ const AddPermission = () => {
                 description: formData.description.trim(),
             };
 
-            const response = await fetch("/api/v1/permissions", {
+            const response = await apiFetch("/api/v1/permissions", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": import.meta.env.VITE_API_KEY || "",
-                    Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-                },
                 body: JSON.stringify(payload),
             });
 

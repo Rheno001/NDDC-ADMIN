@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { toast } from 'react-toastify';
 import { TanStackTable } from '../Common/TanStackTable';
 import FormFieldModal, { FormFieldModalHandle } from './FormFieldModal';
+import { apiFetch } from '../../../utils/api';
 
 interface FormField {
     id: string;
@@ -24,13 +25,8 @@ const ManageFields = () => {
 
     const fetchDocumentInfo = useCallback(async () => {
         try {
-            const response = await fetch(`/api/v1/document-types/${id}`, {
+            const response = await apiFetch(`/api/v1/document-types/${id}`, {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': import.meta.env.VITE_API_KEY || '',
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
-                }
             });
             if (response.ok) {
                 const result = await response.json();
@@ -46,13 +42,8 @@ const ManageFields = () => {
     const fetchFields = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`/api/v1/document-types/${id}/fields`, {
+            const response = await apiFetch(`/api/v1/document-types/${id}/fields`, {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': import.meta.env.VITE_API_KEY || '',
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
-                }
             });
 
             if (!response.ok) {
@@ -101,13 +92,8 @@ const ManageFields = () => {
         if (!window.confirm('Are you sure you want to delete this field?')) return;
 
         try {
-            const response = await fetch(`/api/v1/document-types/${id}/fields/${fieldId}`, {
+            const response = await apiFetch(`/api/v1/document-types/${id}/fields/${fieldId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': import.meta.env.VITE_API_KEY || '',
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
-                }
             });
 
             if (!response.ok) {
@@ -130,13 +116,8 @@ const ManageFields = () => {
                 : `/api/v1/document-types/${id}/fields`;
             const method = isEdit ? 'PUT' : 'POST';
 
-            const response = await fetch(url, {
+            const response = await apiFetch(url, {
                 method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': import.meta.env.VITE_API_KEY || '',
-                    'Authorization': `Bearer ${sessionStorage.getItem('accessToken')}`
-                },
                 body: JSON.stringify(field)
             });
 

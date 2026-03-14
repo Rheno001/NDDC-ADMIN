@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { MenuList } from "./Menu";
 import { useScrollPosition } from "@n8tb1t/use-scroll-position";
 import { ThemeContext } from "../../../context/ThemeContext";
+import { apiFetch } from "../../../utils/api";
 
 interface MenuItem {
   title: string;
@@ -42,12 +43,8 @@ const SideBar: React.FC = () => {
 
     if (refreshToken) {
       try {
-        await fetch("/api/v1/auth/logout", {
+        await apiFetch("/api/v1/auth/logout", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": import.meta.env.VITE_API_KEY,
-          },
           body: JSON.stringify({ refreshToken }),
         });
       } catch (error) {

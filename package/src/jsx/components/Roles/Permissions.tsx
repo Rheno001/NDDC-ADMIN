@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { TanStackTable } from "../Common/TanStackTable";
 import { ColumnDef, Row } from "@tanstack/react-table";
+import { apiFetch } from "../../../utils/api";
 
 interface PermissionRow {
     id: string;
@@ -26,13 +27,8 @@ const Permissions = () => {
         setIsLoading(true);
         try {
             const activePage = page !== undefined ? page : pageIndex;
-            const response = await fetch(`/api/v1/permissions?page=${activePage}&size=1000&groupType=ALL&search=${globalFilter}`, {
+            const response = await apiFetch(`/api/v1/permissions?page=${activePage}&size=1000&groupType=ALL&search=${globalFilter}`, {
                 method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": import.meta.env.VITE_API_KEY || "",
-                    Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-                },
             });
 
             if (!response.ok) {

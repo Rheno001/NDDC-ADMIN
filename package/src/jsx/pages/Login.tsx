@@ -77,7 +77,6 @@ const Login: React.FC<Props> = ({ setAuth }) => {
       const data: LoginResponse = await res.json();
       const { accessToken, refreshToken } = data.data;
 
-      // Store tokens — never store passwords
       sessionStorage.setItem("accessToken", accessToken);
       sessionStorage.setItem("refreshToken", refreshToken);
       sessionStorage.setItem("username", username);
@@ -113,7 +112,6 @@ const Login: React.FC<Props> = ({ setAuth }) => {
             </p>
           </div>
           <div className="brand-illustration">
-            {/* You can add an illustration image here if available */}
           </div>
         </div>
 
@@ -201,11 +199,6 @@ const Login: React.FC<Props> = ({ setAuth }) => {
                   <i className={showPassword ? "fa fa-eye-slash" : "fa fa-eye"}></i>
                 </button>
               </div>
-              {errors.password && (
-                <div className="field-error">
-                  <i className="fa fa-info-circle"></i> {errors.password}
-                </div>
-              )}
             </div>
 
             <div className="login-options-row">

@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { SVGICON } from "../Dashboard/Content";
-import { Dropdown } from "react-bootstrap";
 import { toast } from "react-toastify";
-import PaymentHistoryTable from "./PaymentHistoryTable";
+//import PaymentHistoryTable from "./PaymentHistoryTable";
 import { apiFetch } from "../../../utils/api";
 
 interface VendorDetailsData {
@@ -132,7 +131,7 @@ const VendorDetails = () => {
     { title: "Website", subtitle: vendor.websiteAddress, icon: "fa-solid fa-globe" },
     { title: "Contact First Name", subtitle: vendor.contactFirstName, icon: "fa-solid fa-user-tie" },
     { title: "Contact Last Name", subtitle: vendor.contactLastName, icon: "fa-solid fa-user-tie" },
-    { title: "Contact Phone", subtitle: vendor.contactPhone, icon: "fa-solid fa-mobile-screen" },
+    { title: "Contact Phone", subtitle: vendor.contactPhone, icon: "fa-solid fa-phone" },
     { title: "Contact Email", subtitle: vendor.contactEmail, icon: "fa-solid fa-envelope-open-text" },
     { title: "Contact Address", subtitle: vendor.contactAddress, icon: "fa-solid fa-map-location-dot" },
   ];
@@ -206,45 +205,43 @@ const VendorDetails = () => {
                   <i className="fa-solid fa-pen-to-square me-2"></i>
                   Edit Details
                 </Link>
-                <Dropdown className="custom-dropdown">
-                  <Dropdown.Toggle as="div" className="i-false btn sharp tp-btn ">
-                    {SVGICON.dots}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu className="dropdown-menu-end" align="end" renderOnMount>
-                    <Dropdown.Item>Option 1</Dropdown.Item>
-                    <Dropdown.Item>Option 2</Dropdown.Item>
-                    <Dropdown.Item>Option 3</Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
+                <button
+                  type="button"
+                  className="btn btn-outline-primary btn-sm"
+                  onClick={() => toast.info("View Documents feature coming soon!")}
+                >
+                  <i className="fa-solid fa-file-invoice me-2"></i>
+                  View Documents
+                </button>
               </div>
             </div>
             <div className="row mt-4">
               {basicDetail.map((item, ind) => (
                 <div className="col-xl-3 col-xxl-4 col-md-6 mb-4" key={ind}>
-                  <ul className="vendor-details d-flex align-items-center">
-                    <li className="me-3">
-                      <span className="icon-box bg-primary-light d-flex align-items-center justify-content-center" style={{ width: 44, height: 44, borderRadius: "50%" }}>
-                        <i className={`${item.icon} text-primary fs-5`}></i>
-                      </span>
-                    </li>
-                    <li>
-                      <span className="text-muted font-w500 fs-13 mb-1 d-block">{item.title}</span>
-                      <h5 className="mb-0 font-w600 text-black">{item.subtitle}</h5>
-                    </li>
-                  </ul>
+                  <div className="card h-100 shadow-sm border-0 mb-0" style={{ background: "#f8f9fa" }}>
+                    <div className="card-body p-3">
+                      <div className="d-flex align-items-center mb-2">
+                        <i className={`${item.icon} text-primary fs-14 me-2`}></i>
+                        <span className="text-muted font-w500 fs-13">{item.title}</span>
+                      </div>
+                      <h5 className="mb-0 font-w600 text-black" style={{ wordBreak: "break-word", lineHeight: 1.4 }}>
+                        {item.subtitle}
+                      </h5>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         </div>
-        <div className="card h-auto">
+        {/*<div className="card h-auto">
           <div className="card-header border-0 p-3">
             <h4 className="heading mb-0">Payment History</h4>
           </div>
           <div className="card-body p-0">
             <PaymentHistoryTable />
           </div>
-        </div>
+        </div>*/}
       </div>
       <div className="col-xl-3">
         <div className="row">

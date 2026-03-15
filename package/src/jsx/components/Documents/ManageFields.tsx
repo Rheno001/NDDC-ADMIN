@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useLocation } from 'react-router-dom';
 import { ColumnDef } from '@tanstack/react-table';
 import { toast } from 'react-toastify';
 import { TanStackTable } from '../Common/TanStackTable';
@@ -18,8 +18,9 @@ interface FormField {
 
 const ManageFields = () => {
     const { id } = useParams<{ id: string }>();
+    const location = useLocation();
     const modalRef = useRef<FormFieldModalHandle>(null);
-    const [docTypeName, setDocTypeName] = useState('...');
+    const [docTypeName, setDocTypeName] = useState(location.state?.docName || '...');
     const [data, setData] = useState<FormField[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -30,8 +31,9 @@ const ManageFields = () => {
             });
             if (response.ok) {
                 const result = await response.json();
-                if (result && result.data) {
-                    setDocTypeName(result.data.name || '...');
+                const d = result.data || result;
+                if (d) {
+                    setDocTypeName(d.name || d.label || '...');
                 }
             }
         } catch (error) {
@@ -190,8 +192,8 @@ const ManageFields = () => {
         <>
             <div className="page-titles">
                 <ol className="breadcrumb">
-                    <li className="breadcrumb-item"><Link to="/documents">Document Types</Link></li>
-                    <li className="breadcrumb-item active"><Link to="#">Manage Fields</Link></li>
+                    <li className="breadcrumb-item"><Link to="/documents">Documents</Link></li>
+                    <li className="breadcrumb-item active"><Link to="#">Manage Fields: {docTypeName}</Link></li>
                 </ol>
             </div>
             <div className="card">

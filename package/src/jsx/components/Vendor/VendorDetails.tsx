@@ -184,7 +184,7 @@ const VendorDetails = () => {
             </div>
           </div>
           <div className="card-body">
-            <div className="d-flex justify-content-between flex-wrap">
+            <div className="d-flex justify-content-between flex-wrap border-bottom pb-4 mb-3">
               <div className="user">
                 <div className="user-media">
                   <div className="avatar avatar-xxl bg-primary d-flex align-items-center justify-content-center text-white" style={{ fontSize: "2rem", fontWeight: 700 }}>
@@ -208,13 +208,14 @@ const VendorDetails = () => {
                 <button
                   type="button"
                   className="btn btn-outline-primary btn-sm"
-                  onClick={() => toast.info("View Documents feature coming soon!")}
+                  onClick={() => navigate(`/vendor-documents/${vendor.id}`)}
                 >
                   <i className="fa-solid fa-file-invoice me-2"></i>
                   View Documents
                 </button>
               </div>
             </div>
+
             <div className="row mt-4">
               {basicDetail.map((item, ind) => (
                 <div className="col-xl-3 col-xxl-4 col-md-6 mb-4" key={ind}>
@@ -232,16 +233,57 @@ const VendorDetails = () => {
                 </div>
               ))}
             </div>
+
+            <div className="mt-5">
+              <div className="d-flex align-items-center justify-content-between mb-3">
+                <h4 className="card-title">Vendor Users</h4>
+                <button className="btn btn-primary btn-xs">+ Add User</button>
+              </div>
+              <div className="table-responsive">
+                <table className="table table-responsive-md">
+                  <thead>
+                    <tr>
+                      <th><strong>S/N</strong></th>
+                      <th><strong>NAME</strong></th>
+                      <th><strong>EMAIL</strong></th>
+                      <th><strong>ROLE</strong></th>
+                      <th><strong>STATUS</strong></th>
+                      <th><strong>ACTION</strong></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>01</strong></td>
+                      <td>James Wilson</td>
+                      <td>j.wilson@vendor.com</td>
+                      <td>Admin</td>
+                      <td><span className="badge light badge-success">Active</span></td>
+                      <td>
+                        <div className="d-flex">
+                          <Link to="#" className="btn btn-primary shadow btn-xs sharp me-1"><i className="fa fa-pencil"></i></Link>
+                          <Link to="#" className="btn btn-danger shadow btn-xs sharp"><i className="fa fa-trash"></i></Link>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>02</strong></td>
+                      <td>Sarah Parker</td>
+                      <td>s.parker@vendor.com</td>
+                      <td>Staff</td>
+                      <td><span className="badge light badge-success">Active</span></td>
+                      <td>
+                        <div className="d-flex">
+                          <Link to="#" className="btn btn-primary shadow btn-xs sharp me-1"><i className="fa fa-pencil"></i></Link>
+                          <Link to="#" className="btn btn-danger shadow btn-xs sharp"><i className="fa fa-trash"></i></Link>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
-        {/*<div className="card h-auto">
-          <div className="card-header border-0 p-3">
-            <h4 className="heading mb-0">Payment History</h4>
-          </div>
-          <div className="card-body p-0">
-            <PaymentHistoryTable />
-          </div>
-        </div>*/}
       </div>
       <div className="col-xl-3">
         <div className="row">

@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Dropdown } from "react-bootstrap";
 import { toast } from "react-toastify";
 import CreateBidModal, { CreateBidModalHandle } from "./CreateBidModal";
@@ -33,6 +33,7 @@ const statusBadge: Record<string, { badge: string; text: string }> = {
 };
 
 const Bids = () => {
+    const navigate = useNavigate();
     const modalRef = useRef<CreateBidModalHandle>(null);
     const viewModalRef = useRef<ViewBidModalHandle>(null);
     const [selectedBidForView, setSelectedBidForView] = useState<BidRow | undefined>(undefined);
@@ -310,8 +311,7 @@ const Bids = () => {
                                 popperConfig={{ strategy: "fixed" }}
                             >
                                 <Dropdown.Item onClick={() => {
-                                    setSelectedBidForView(item);
-                                    viewModalRef.current?.show();
+                                    navigate(`/bid-details/${item.id}`, { state: { bid: item } });
                                 }}>
                                     View Details
                                 </Dropdown.Item>

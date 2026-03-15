@@ -6,7 +6,7 @@ export const MenuList = [
     to: "dashboard",
   },
   {
-    title: "Vendors",
+    title: "Vendor Management",
     classsChange: "mm-collapse",
     iconStyle: <i className="material-symbols-outlined">domain</i>,
     content: [
@@ -26,7 +26,7 @@ export const MenuList = [
     to: "bids",
   },
   {
-    title: "Doc Management",
+    title: "Documents",
     classsChange: "mm-collapse",
     iconStyle: <i className="material-symbols-outlined">description</i>,
     content: [

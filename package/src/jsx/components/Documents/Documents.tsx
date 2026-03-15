@@ -155,6 +155,7 @@ const Documents = () => {
                     </Link>
                     <Link
                         to={`/documents/manage-fields/${info.row.original.id}`}
+                        state={{ docName: info.row.original.name }}
                         className="btn btn-info shadow btn-xs sharp"
                     >
                         <i className="fa fa-list"></i>

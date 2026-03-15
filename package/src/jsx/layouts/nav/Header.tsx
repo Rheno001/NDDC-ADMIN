@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 /// Scroll
 import { Dropdown } from "react-bootstrap";
 
@@ -31,6 +30,7 @@ interface propType {
 }
 
 const Header = ({ onNote }: propType) => {
+  const location = useLocation();
   //For header fixed
   const [headerFix, setheaderFix] = useState(false);
   useEffect(() => {
@@ -96,13 +96,17 @@ const Header = ({ onNote }: propType) => {
                 className="dashboard_bar"
                 style={{ textTransform: "capitalize" }}
               >
-                {finalName.join(" ").length === 0
-                  ? "Dashboard"
-                  : finalName.join(" ") === "dashboard dark"
-                    ? "Dashboard"
-                    : finalName.join(" ") === "documents"
-                      ? "Document Types"
-                      : finalName.join(" ")}
+                {location.pathname.includes("manage-fields")
+                  ? "Manage Fields"
+                  : location.pathname.includes("bid-details")
+                    ? (location.state?.bid?.title ? `Bid Details` : "Bid Details")
+                    : finalName.join(" ").length === 0
+                      ? "Dashboard"
+                      : finalName.join(" ") === "dashboard dark"
+                        ? "Dashboard"
+                        : finalName.join(" ") === "documents"
+                          ? "Documents"
+                          : finalName.join(" ")}
               </div>
             </div>
             <ul className="navbar-nav header-right">

@@ -24,6 +24,9 @@ import DashboardDark from "./components/Dashboard/DashboardDark";
 import Vendors from "./components/Vendor/Vendors";
 import VendorDetails from "./components/Vendor/VendorDetails";
 import AddNewVendor from "./components/Vendor/AddNewVendor";
+import VendorDocuments from "./components/Vendor/VendorDocuments";
+import VendorBids from "./components/Vendor/VendorBids";
+import VendorEvaluation from "./components/Vendor/VendorEvaluation";
 
 //Roles
 import Roles from "./components/Roles/Roles";
@@ -37,6 +40,7 @@ import Bids from "./components/Bids/Bids";
 //Documents
 import Documents from "./components/Documents/Documents";
 import ManageFields from "./components/Documents/ManageFields";
+import BidDetails from "./components/Bids/BidDetails";
 
 
 
@@ -68,6 +72,9 @@ const Markup = () => {
           <Route path="/dashboard-dark" element={<DashboardDark />} />
           <Route path="/vendors" element={<Vendors />} />
           <Route path="/vendor-details" element={<VendorDetails />} />
+          <Route path="/vendor-documents/:id" element={<VendorDocuments />} />
+          <Route path="/vendor-bids/:id" element={<VendorBids />} />
+          <Route path="/vendor-evaluation/:id" element={<VendorEvaluation />} />
           <Route path="/add-vendor" element={<AddNewVendor />} />
           <Route path="/edit-vendor" element={<AddNewVendor />} />
           <Route path="/roles" element={<Roles />} />
@@ -75,6 +82,7 @@ const Markup = () => {
           <Route path="/permissions" element={<Permissions />} />
           <Route path="/add-permission" element={<AddPermission />} />
           <Route path="/bids" element={<Bids />} />
+          <Route path="/bid-details/:id" element={<BidDetails />} />
           <Route path="/documents" element={<Documents />} />
           <Route path="/documents/manage-fields/:id" element={<ManageFields />} />
         </Route>
